@@ -27,6 +27,7 @@ public class Criptografia {
      * @return el texto dividido de acuerdo al número de letras.
      */
     public static String separaTexto(String texto, int numLetras){
+        texto = limpiaTexto(texto);
         int contador = numLetras;
         String textoAux = "";
         for (int i = 0; i < texto.length(); i++){
@@ -49,6 +50,7 @@ public class Criptografia {
      */
     public static Hashtable<String, String> porcentajeLetra(Hashtable<String, Integer> conteoCaracteres, String texto){
         Hashtable<String, String> porcentajes = new Hashtable<>();  
+        texto = limpiaTexto(texto);
         int longTexto = texto.length();
         DecimalFormat formato = new DecimalFormat("#.000");
 
@@ -56,14 +58,12 @@ public class Criptografia {
         Enumeration<String> enu = conteoCaracteres.keys();
 
         while (enu.hasMoreElements()) {
- 
             String key = enu.nextElement();
             int repeticiones = conteoCaracteres.get(key);
             double porcentaje = (double) (repeticiones * 100) / longTexto;
-            String porcRedondeado = formato.format(porcentaje) + "%";
-            porcentajes.put(key, porcRedondeado);
+            String porcFormato = formato.format(porcentaje) + "%";
+            porcentajes.put(key, porcFormato);
         }
-
         return porcentajes;  
     }
 
@@ -71,6 +71,7 @@ public class Criptografia {
 
     public static Hashtable<String, Integer> conteoDeCaracteres(String texto){
         Hashtable<String, Integer> frecuencias = new Hashtable<>();  
+        texto = limpiaTexto(texto);
         for(int i = 0; i < texto.length(); i++){
             String letra = "" + texto.charAt(i);
             if(frecuencias.containsKey(letra)){
@@ -107,7 +108,6 @@ public class Criptografia {
     //}
 
 
-
     public static void main(String[] args){
 
         System.out.println("\nTEXTO:");
@@ -119,24 +119,26 @@ public class Criptografia {
         //  Prueba del método que cuenta las frecuencias de una letra en el texto.
         System.out.println("\n PRUEBA DE FRECUENCIAS EN EL TEXTO");
         Hashtable<String, Integer> frecuencias = new Hashtable<>(); 
-        frecuencias = conteoDeCaracteres(limpiaTexto(texto));
+        frecuencias = conteoDeCaracteres(texto);
         System.out.println(frecuencias);
         System.out.println("______________________");
 
         //  Prueba del método que limpia texto
         System.out.println("\n PRUEBA DE LIMPIAR TEXTO");
-        System.out.println(limpiaTexto("Hola, # muCh0o @ ! Gusto $u/w.u"));
+        String oracion = "Hola, # muCh0o @ ! Gusto $u/w.u";
+        System.out.println("Texto original: " + oracion);
+        System.out.println("Texto limpio: " + limpiaTexto(oracion));
         System.out.println("______________________");
 
         //  Prueba del método que divide el texto en n letras.
         System.out.println("\n PRUEBA DE DIVIDIR TEXTO EN 2");
-        System.out.println(separaTexto(limpiaTexto(texto), 2));
+        System.out.println(separaTexto(texto, 2));
         System.out.println("______________________");
 
         //  Prueba del método que da el porcentaje de cuánto aparece una letra en el texto.
         System.out.println("\n PRUEBA DE PORCENTAJE DE APARICIÓN DE LETRA");
         Hashtable<String, String> porcentajes = new Hashtable<>(); 
-        porcentajes = porcentajeLetra(frecuencias, limpiaTexto(texto));
+        porcentajes = porcentajeLetra(frecuencias, texto);
         System.out.println(porcentajes);
         System.out.println("______________________");
 
