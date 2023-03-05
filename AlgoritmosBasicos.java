@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 
 public class AlgoritmosBasicos{
 
-
     /**
      * Método que le quita espacios, dígitos y caracteres especiales a un texto.
      * @param texto es el texto a limpiar.
