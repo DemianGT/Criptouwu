@@ -3,10 +3,16 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.text.DecimalFormat;
-
+import java.util.Scanner;
 public class AlgoritmosBasicos{
 
+    String textoOriginal = "";
+    String texto = "";
+    ArrayList<String[]> historial = new ArrayList<>();
+
     /**
+     * 0] Preprocesamiento de texto 
+     * 1] Pasar de minusculas a mayusculas
      * Método que le quita espacios, dígitos y caracteres especiales a un texto.
      * @param texto es el texto a limpiar.
      * @return el texto limpio convertido a mayúsculas.
@@ -18,30 +24,8 @@ public class AlgoritmosBasicos{
         return textoLimpio;
     }
 
-
-    /**
-     * Método que divide en subcadenas un texto.
-     * @param texto es el texto a dividir.
-     * @param numLetras es el número de letras en el que será divido el texto.
-     * @return el texto dividido de acuerdo al número de letras.
-     */
-    public static String separaTexto(String texto, int numLetras){
-        texto = limpiaTexto(texto);
-        int contador = numLetras;
-        String textoAux = "";
-        for (int i = 0; i < texto.length(); i++){
-            String letra = "" + texto.charAt(i);
-            textoAux += letra;
-            if(contador == (i+1)){
-                textoAux += " ";
-                contador += numLetras;
-            } 
-        }
-        return textoAux;
-    }
-
-
-    /**
+        /**
+     * 2] Contar letras y trabajar un poco con esas estadisticas
      * Método que nos da el porcentaje de apariciones de una letra en el texto.
      * @param conteoCaracteres es la tabla hash que contiene las aparciones de la letra en el texto.
      * @param texto es el texto a dividir.
@@ -66,8 +50,45 @@ public class AlgoritmosBasicos{
         return porcentajes;  
     }
 
+    public static void ordenaTablaPorcentajes(Hashtable<String, String> porcentajes){
+        ArrayList<String> keys = new ArrayList<String>(porcentajes.keySet());
+        ArrayList<String> values = new ArrayList<String>(porcentajes.values());
+
+        
+
+        Collections.sort(values, (s1, s2) -> {
+            double v1 = Double.parseDouble(s1.replace("%", ""));
+            double v2 = Double.parseDouble(s2.replace("%", ""));
+            return Double.compare(v1, v2);
+        });
+        
+        Collections.sort(keys, (k1, k2) -> {
+            String v1 = porcentajes.get(k1);
+            String v2 = porcentajes.get(k2);
+            double n1 = Double.parseDouble(v1.replace("%", ""));
+            double n2 = Double.parseDouble(v2.replace("%", ""));
+            return Double.compare(n1, n2);
+        });
+
+        String porcentajesString = "{";
+        for(int i=0;i<keys.size();i++){
+            if(i<keys.size()-1){
+                porcentajesString+=keys.get(i)+"="+values.get(i)+",";
+            }else{
+                porcentajesString+=keys.get(i)+"="+values.get(i)+"}";
+            }
+            
+        }
+        System.out.println(porcentajesString);
+    }
 
 
+    /**
+     * 2] Contar letras y trabajar un poco con esas estadisticas
+     * Metodo que cuenta los caracteres de un texto y los pone en una tabla de frecuencias
+     * @param texto el texto a contar caracteres
+     * @return una tabla de frecuencias
+     */
     public static Hashtable<String, Integer> conteoDeCaracteres(String texto){
         Hashtable<String, Integer> frecuencias = new Hashtable<>();  
         texto = limpiaTexto(texto);
@@ -82,63 +103,287 @@ public class AlgoritmosBasicos{
         return frecuencias;  
     }
 
+    public static void ordenaTablaFrecuencias(Hashtable<String, Integer> frecuencias){
+        ArrayList<String> keys = new ArrayList<String>(frecuencias.keySet());
+        ArrayList<Integer> values = new ArrayList<Integer>(frecuencias.values());
+
+        Collections.sort(values);
+        Collections.sort(keys, new Comparator<String>() {
+            @Override
+            public int compare(String key1, String key2) {
+                Integer value1 = frecuencias.get(key1);
+                Integer value2 = frecuencias.get(key2);
+                return value1.compareTo(value2);
+            }
+        });
+
+        String frecuenciaString = "{";
+        for(int i=0;i<keys.size();i++){
+            if(i<keys.size()-1){
+                frecuenciaString+=keys.get(i)+"="+values.get(i)+",";
+            }else{
+                frecuenciaString+=keys.get(i)+"="+values.get(i)+"}";
+            }
+            
+        }
+        System.out.println(frecuenciaString);
+    }
+
+    public static void tablaApariciones(Hashtable<String, Integer> frecuencias, Hashtable<String, String> porcentajes){
+        ArrayList<String> keysF = new ArrayList<String>(frecuencias.keySet());
+        ArrayList<Integer> valuesF = new ArrayList<Integer>(frecuencias.values());
+
+        Collections.sort(valuesF);
+        Collections.sort(keysF, new Comparator<String>() {
+            @Override
+            public int compare(String key1, String key2) {
+                Integer value1 = frecuencias.get(key1);
+                Integer value2 = frecuencias.get(key2);
+                return value1.compareTo(value2);
+            }
+        });
+
+        
+        
+        ArrayList<String> keysP = new ArrayList<String>(porcentajes.keySet());
+        ArrayList<String> valuesP = new ArrayList<String>(porcentajes.values());
+
+        
+
+        Collections.sort(valuesP, (s1, s2) -> {
+            double v1 = Double.parseDouble(s1.replace("%", ""));
+            double v2 = Double.parseDouble(s2.replace("%", ""));
+            return Double.compare(v1, v2);
+        });
+        
+        Collections.sort(keysP, (k1, k2) -> {
+            String v1 = porcentajes.get(k1);
+            String v2 = porcentajes.get(k2);
+            double n1 = Double.parseDouble(v1.replace("%", ""));
+            double n2 = Double.parseDouble(v2.replace("%", ""));
+            return Double.compare(n1, n2);
+        });
+
+        String aparicionesString = "";
+        for(int i=0;i<keysF.size();i++){
+                aparicionesString+="\u001B[35m\u001B[1m"+keysF.get(i)+"\u001B[0m = [\u001B[31m\u001B[1m"+valuesF.get(i)+"\u001B[0m-\u001B[32m\u001B[1m"+valuesP.get(i)+"\u001B[0m] \n";
+        }
+        System.out.println("\n"+aparicionesString+"\n");
+    }
+
+    
 
     /**
-     * MÉTODO QUE TENÍA ANTES MI POMPA BONITA. 
-     * ES IGUAL AL DE ARRIBA PERO LE BORRÉ LINEAS DE CÓDIGO DONDE SE VERIFICAN 
-     * ESPACIOS PORQUE YA LO HACE EL MÉTODO QUE LIMPIA EL TEXTO.
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que modifica el texto original a trabajar
+     * @param textoOriginal el texto a modificar
      */
+    public void modificaTextoOriginal(String textoOriginal){
+        this.texto = textoOriginal;
+        this.textoOriginal = textoOriginal;
+        System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+        System.out.println(colorTexto(texto)+"\n");
+    }
+    /**
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que modifica una letra del texto por otra
+     * @param anterior la letra a remplazar
+     * @param nuevo la letra que remplazara
+     */
+    public void modificaLetras(String anterior, String nuevo){
+        if(texto.contains(anterior)){
+            String[] ultimoPaso = new String[2];
+            ultimoPaso[0] = anterior;
+            ultimoPaso[1] = nuevo;
+            this.texto=this.texto.replace(anterior, nuevo);
+            System.out.println("\nLetras modificadas exitosamente uwu.\n");
+            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+            System.out.print(colorTexto(texto)+"\n");
+            historial.add(ultimoPaso);
+            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+            imprimeHistorial();
+        }else{
+            System.out.println("\nNo existe esa letra en el texto, asegurate de estar escribiendola bien uwu\n");
+        }
+        
+        
+    }
+    /**
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que imprime el historial de cambios
+     */
+    public void imprimeHistorial(){
+        for(String[] pasos: historial){
+            System.out.println("["+pasos[0]+"->"+pasos[1]+"]");
+        }
+    }
+    /**
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que colorea las letras minusculas de color verde y las mayusculas de color blanco
+     * @param texto el texto a colorear
+     * @return el texto coloreado
+     */
+    public static String colorTexto(String texto) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < texto.length(); i++) {
+            char c = texto.charAt(i);
+            if (Character.isLowerCase(c)) {
+                sb.append("\u001B[38;5;82m\u001B[1m").append(c).append("\u001B[0m");
+            } else {
+                sb.append("\u001B[1m").append(c).append("\u001B[0m");
+            }
+        }
+        return sb.toString();
+    }
+    /**
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que regresa al ultimo cambio hecho sobre el texto
+     */
+    public void ultimoPaso(){
+        if(historial.size()!=0){
+            String[] ultimoPaso = historial.get(historial.size()-1);
+            texto=this.texto.replace(ultimoPaso[1], ultimoPaso[0]);
+            System.out.println("\nÚltimo paso revertido exitosamente uwu.\n");
+            historial.remove(historial.size()-1);
+            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+            System.out.print(colorTexto(texto)+"\n");
+            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+            imprimeHistorial();
+        }else{
+            System.out.println("\nYa estas en el ultimo paso uwu\n");
+            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+            System.out.print(colorTexto(texto)+"\n");
+            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+            imprimeHistorial();
+        }
+        
+    }
+    /**
+     * 4] Sustituir letras por otras letras en el mismo texto
+     * Metodo que regresa al texto a su estado sin cambios
+     */
+    public void regresaAlTextoOriginal(){
+        this.texto=this.textoOriginal;
+        historial.clear();
+        System.out.println("\nTexto Restaurado uwu\n");
 
-    //private static Hashtable<String, Integer> conteoDeCaracteres(String texto){
-    //    Hashtable<String, Integer> frecuencias = new Hashtable<>();  
-    //    for(int i=0; i<texto.length(); i++){
-    //        String letra =""+texto.charAt(i);
-    //        if(texto.charAt(i)+" " ==" "){
-    //            frecuencias.put(" ", 1);
-    //        }else{
-    //            if(frecuencias.containsKey(letra)==true){
-    //                frecuencias.put(letra, frecuencias.get(letra)+1);
-    //            }else{
-    //                frecuencias.put(letra, 1);
-    //            } 
-    //        }
-    //    }
-    //    return frecuencias;  
-    //}
+        System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+        System.out.print(colorTexto(texto)+"\n");
+        System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+        imprimeHistorial();
+    }
 
 
-    public static void main(String[] args){
+    /**
+     * 5] Separar un texto en bloques de r columnas
+     * Método que divide en subcadenas un texto.
+     * @param texto es el texto a dividir.
+     * @param numLetras es el número de letras en el que será divido el texto.
+     * @return el texto dividido de acuerdo al número de letras.
+     */
+    public static String separaTexto(String texto, int numLetras){
+        texto = limpiaTexto(texto);
+        int contador = numLetras;
+        String textoAux = "";
+        for (int i = 0; i < texto.length(); i++){
+            String letra = "" + texto.charAt(i);
+            textoAux += letra;
+            if(contador == (i+1)){
+                textoAux += " ";
+                contador += numLetras;
+            } 
+        }
+        return textoAux;
+    }
 
-        System.out.println("\nTEXTO:");
-        String texto = "hola mucho gusto uwu";
-        System.out.println(texto);
-        System.out.println("______________________");
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        AlgoritmosBasicos ab = new AlgoritmosBasicos();
 
+        int opcion = 0;
+        String textoOriginal = "";
+        String texto = "";
+        String anterior = "";
+        String nuevo = "";
 
-        //  Prueba del método que cuenta las frecuencias de una letra en el texto.
-        System.out.println("\n PRUEBA DE FRECUENCIAS EN EL TEXTO");
-        Hashtable<String, Integer> frecuencias = new Hashtable<>(); 
-        frecuencias = conteoDeCaracteres(texto);
-        System.out.println(frecuencias);
-        System.out.println("______________________");
+        while (opcion != 9) {
+            System.out.println("\u001B[1m---- MENÚ ALGORITMOS BÁSICOS ----\u001B[0m");
+            System.out.println("1. Modificar texto original");
+            System.out.println("2. Modificar letras");
+            System.out.println("3. Último paso");
+            System.out.println("4. Regresar al texto original\n");
 
-        //  Prueba del método que limpia texto
-        System.out.println("\n PRUEBA DE LIMPIAR TEXTO");
-        String oracion = "Hola, # muCh0o @ ! Gusto $u/w.u";
-        System.out.println("Texto original: " + oracion);
-        System.out.println("Texto limpio: " + limpiaTexto(oracion));
-        System.out.println("______________________");
+            System.out.println("5. Limpia texto");
+            System.out.println("6. Separa texto");
+            System.out.println("7. Conteo y porcentajes de apariciones");
+            
+            System.out.print("\nElige una opción: ");
+            opcion = sc.nextInt();
+            sc.nextLine(); // limpiar el buffer de entrada
 
-        //  Prueba del método que divide el texto en n letras.
-        System.out.println("\n PRUEBA DE DIVIDIR TEXTO EN 2");
-        System.out.println(separaTexto(texto, 2));
-        System.out.println("______________________");
+            switch (opcion) {
+                case 1:
+                    System.out.print("\n\u001B[31m\u001B[1m---- MODIFICAR TEXTO ORIGINAL ----\u001B[0m\n\n");
+                    System.out.print("Ingresa el texto original: ");
+                    textoOriginal = sc.nextLine();
+                    ab.modificaTextoOriginal(textoOriginal);
+                    
+                    break;
+                case 2:
+                    System.out.print("\n\u001B[38;5;166m\u001B[1m---- MODIFICAR LETRAS ----\u001B[0m\n\n");
+                    System.out.print("Ingresa el caracter anterior: ");
+                    anterior = sc.nextLine();
+                    System.out.print("Ingresa el caracter nuevo: ");
+                    nuevo = sc.nextLine();
+                    ab.modificaLetras(anterior, nuevo);
+                    
+                    break;
+                case 3:
+                    System.out.print("\n\u001B[93m\u001B[1m---- ULTIMO PASO ----\u001B[0m\n\n");
+                    ab.ultimoPaso();
+                    break;
+                case 4:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- REGRESAR AL TEXTO ORIGINAL ----\u001B[0m\n\n");
+                    ab.regresaAlTextoOriginal();
+                    break;
+                case 5:
+                    System.out.print("\n\u001B[32m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
+                    System.out.print("Ingrese el texto a limpiar: ");
+                    texto = sc.nextLine();
+                    String textoLimpio = limpiaTexto(texto);
+                    System.out.println("Texto limpio: " + textoLimpio);
+                    break;
+                case 6:
+                    System.out.print("\n\u001B[38;5;99m \u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
+                    System.out.print("Ingrese el texto a separar: ");
+                    texto = sc.nextLine();
+                    System.out.print("Ingrese el número de letras por separación: ");
+                    int numLetras = sc.nextInt();
+                    sc.nextLine(); // Consumir el salto de línea
+                    String textoSeparado = separaTexto(texto, numLetras);
+                    System.out.println("Texto separado: " + textoSeparado);
+                    break;
+                case 7:
+                    System.out.println("\n\u001B[35m\u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n");
+                    System.out.print("Ingrese el texto para calcular el porcentaje de apariciones de letra: ");
+                    texto = sc.nextLine();
+                    Hashtable<String, Integer> conteoCaracteres = conteoDeCaracteres(texto);
+                    Hashtable<String, String> porcentajes = porcentajeLetra(conteoCaracteres, texto);
+                    
+                    tablaApariciones(conteoCaracteres,porcentajes);
+                    break;
+                
+                case 9:
+                    System.out.println("Adios uwu");
+                    break;
+                default:
+                    System.out.println("Opción inválida, intenta de nuevo.");
+                    break;
+            }
 
-        //  Prueba del método que da el porcentaje de cuánto aparece una letra en el texto.
-        System.out.println("\n PRUEBA DE PORCENTAJE DE APARICIÓN DE LETRA");
-        Hashtable<String, String> porcentajes = new Hashtable<>(); 
-        porcentajes = porcentajeLetra(frecuencias, texto);
-        System.out.println(porcentajes);
-        System.out.println("______________________");
-    } 
+            System.out.println();
+        }
+
+        sc.close();
+    }
 }
