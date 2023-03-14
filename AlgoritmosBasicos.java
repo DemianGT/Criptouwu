@@ -171,6 +171,87 @@ public class AlgoritmosBasicos{
         System.out.println("\n"+aparicionesString+"\n");
     }
 
+    /**
+     * 3] Calcular inversos multiplicativos modulo n
+     */
+    public static int mcd(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return mcd(b, a % b);
+        }
+    }
+    
+    public static int[] euclidesExtendido(int a, int b) {
+        if (b == 0) {
+            return new int[] { 1, 0, a };
+        } else {
+            int[] coeficientesAnteriores = euclidesExtendido(b, a % b);
+            int x = coeficientesAnteriores[1];
+            int y = coeficientesAnteriores[0] - (a / b) * coeficientesAnteriores[1];
+            int mcd = coeficientesAnteriores[2];
+            return new int[] { x, y, mcd };
+        }
+    }
+
+    public static int inversoMultiplicativo(int a, int n){
+        int mcd = mcd(a, n);
+        if (mcd != 1) {
+            System.out.println("El inverso modular de " + a + " módulo " + n + " no existe.");
+            return 0;
+        } else {
+            int[] coeficientes = euclidesExtendido(a, n);
+            int inverso = coeficientes[0];
+            while (inverso < 0) {
+                inverso += n;
+            }
+            System.out.println("El inverso modular de " + a + " módulo " + n + " es " + inverso + ".");
+            return inverso;
+        }
+    }
+
+    public static int congruente(int n){
+        int nCongruente = n;
+        while(nCongruente<0){
+            nCongruente+=26;
+        }
+        System.out.println("This"+nCongruente);
+        return nCongruente;
+    }
+
+    // Método que descifra el texto cifrado utilizando el cifrado Afín
+    public static String cifrar(String texto, int m, int a) {
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String resultado = "";
+
+        
+        for(int i=0; i<texto.length(); i++){
+            int y = abecedario.indexOf(texto.charAt(i));
+            int afin = (m*y)+a;
+            int cifrado = afin % 26 ;
+            resultado+=abecedario.charAt(cifrado);
+        }
+
+        return resultado;
+    }
+
+    // Método que descifra el texto cifrado utilizando el cifrado Afín
+    public static String descifrar(String texto, int m, int a) {
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String resultado = "";
+
+        int inverso = inversoMultiplicativo(m, 26);
+        
+        for(int i=0; i<texto.length(); i++){
+            int y = abecedario.indexOf(texto.charAt(i));
+            int afinInverso = (inverso*y)+congruente(inverso*(-a));
+            int descifrado = afinInverso % 26 ;
+            resultado+=abecedario.charAt(descifrado);
+        }
+
+        return resultado;
+    }
+
     
 
     /**
@@ -306,7 +387,10 @@ public class AlgoritmosBasicos{
         String anterior = "";
         String nuevo = "";
 
-        while (opcion != 9) {
+        int m = 0;
+        int a = 0;
+
+        while (opcion != 20) {
             System.out.println("\u001B[1m---- MENÚ ALGORITMOS BÁSICOS ----\u001B[0m");
             System.out.println("1. Modificar texto original");
             System.out.println("2. Modificar letras");
@@ -316,6 +400,9 @@ public class AlgoritmosBasicos{
             System.out.println("5. Limpia texto");
             System.out.println("6. Separa texto");
             System.out.println("7. Conteo y porcentajes de apariciones");
+
+            System.out.println("8 Cifrar mediante una funcion afin");
+            System.out.println("9 Descifrar mediante una funcion afin");
             
             System.out.print("\nElige una opción: ");
             opcion = sc.nextInt();
@@ -372,8 +459,34 @@ public class AlgoritmosBasicos{
                     
                     tablaApariciones(conteoCaracteres,porcentajes);
                     break;
-                
+                case 8:
+                    System.out.println("\n\u001B[35m\u001B[1m---- CIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
+                    System.out.print("Ingrese el texto a cifrar: \n");
+                    texto = sc.nextLine();
+                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
+                    m = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
+                    a = sc.nextInt();
+                    sc.nextLine();
+                    
+                    System.out.println(cifrar(texto, m, a));
+                    break;
                 case 9:
+                    System.out.println("\n\u001B[35m\u001B[1m---- DESCIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
+                    System.out.print("Ingrese el texto a descifrar:\n");
+                    texto = sc.nextLine();
+                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
+                    m = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
+                    a = sc.nextInt();
+                    sc.nextLine();
+                    
+                    System.out.println(descifrar(texto, m, a));
+                    break;
+                
+                case 10:
                     System.out.println("Adios uwu");
                     break;
                 default:
