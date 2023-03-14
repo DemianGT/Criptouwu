@@ -24,7 +24,7 @@ public class AlgoritmosBasicos{
         return textoLimpio;
     }
 
-        /**
+    /**
      * 2] Contar letras y trabajar un poco con esas estadisticas
      * Método que nos da el porcentaje de apariciones de una letra en el texto.
      * @param conteoCaracteres es la tabla hash que contiene las aparciones de la letra en el texto.
@@ -49,7 +49,11 @@ public class AlgoritmosBasicos{
         }
         return porcentajes;  
     }
-
+    /**
+     * 2] Contar letras y trabajar un poco con esas estadisticas
+     * Metodo que ordena una tabla de porcentajes para su lectura
+     * @param porcentajes una tabla de porcentajes del tipo {A=100%, B=0%}
+     */
     public static void ordenaTablaPorcentajes(Hashtable<String, String> porcentajes){
         ArrayList<String> keys = new ArrayList<String>(porcentajes.keySet());
         ArrayList<String> values = new ArrayList<String>(porcentajes.values());
@@ -81,8 +85,6 @@ public class AlgoritmosBasicos{
         }
         System.out.println(porcentajesString);
     }
-
-
     /**
      * 2] Contar letras y trabajar un poco con esas estadisticas
      * Metodo que cuenta los caracteres de un texto y los pone en una tabla de frecuencias
@@ -102,7 +104,11 @@ public class AlgoritmosBasicos{
         }
         return frecuencias;  
     }
-
+    /**
+     * 2] Contar letras y trabajar un poco con esas estadisticas
+     * Metodo que ordena una tabla de frecuencias para su lectura
+     * @param frecuencias una tabla de frecuencias del tipo {A=1, B=0}
+     */
     public static void ordenaTablaFrecuencias(Hashtable<String, Integer> frecuencias){
         ArrayList<String> keys = new ArrayList<String>(frecuencias.keySet());
         ArrayList<Integer> values = new ArrayList<Integer>(frecuencias.values());
@@ -128,7 +134,13 @@ public class AlgoritmosBasicos{
         }
         System.out.println(frecuenciaString);
     }
-
+    /**
+     * 2] Contar letras y trabajar un poco con esas estadisticas
+     * Metodo que ordena una tabla de porcentajes y frecuencias en una tabla de apariciones de la forma
+     * {A = [1-100%], B = [0-0%]}
+     * @param porcentajes una tabla de porcentajes del tipo {A=100%, B=0%}
+     * @param frecuencias una tabla de frecuencias del tipo {A=1, B=0}
+     */
     public static void tablaApariciones(Hashtable<String, Integer> frecuencias, Hashtable<String, String> porcentajes){
         ArrayList<String> keysF = new ArrayList<String>(frecuencias.keySet());
         ArrayList<Integer> valuesF = new ArrayList<Integer>(frecuencias.values());
@@ -170,9 +182,12 @@ public class AlgoritmosBasicos{
         }
         System.out.println("\n"+aparicionesString+"\n");
     }
-
     /**
      * 3] Calcular inversos multiplicativos modulo n
+     * Metodo que obtiene el maximo comun divisor entre dos numeros
+     * @param a el primer numero a sacar el maximo comun divisor
+     * @param b el segundo numero a sacar el maximo comun divisor 
+     * @return el maximo comun divisor de los dos numeros
      */
     public static int mcd(int a, int b) {
         if (b == 0) {
@@ -181,7 +196,13 @@ public class AlgoritmosBasicos{
             return mcd(b, a % b);
         }
     }
-    
+    /**
+     * 3] Calcular inversos multiplicativos modulo n
+     * Metodo que implementa el algoritmo de euclides 
+     * @param a el primer numero a sacar el valor
+     * @param b el segundo numero a sacar el valor
+     * @return los coeficientes de bezout y el maximo comun divisor entre ellos
+     */
     public static int[] euclidesExtendido(int a, int b) {
         if (b == 0) {
             return new int[] { 1, 0, a };
@@ -193,67 +214,39 @@ public class AlgoritmosBasicos{
             return new int[] { x, y, mcd };
         }
     }
-
-    public static int inversoMultiplicativo(int a, int n){
-        int mcd = mcd(a, n);
-        if (mcd != 1) {
-            System.out.println("El inverso modular de " + a + " módulo " + n + " no existe.");
-            return 0;
-        } else {
-            int[] coeficientes = euclidesExtendido(a, n);
-            int inverso = coeficientes[0];
-            while (inverso < 0) {
-                inverso += n;
-            }
-            System.out.println("El inverso modular de " + a + " módulo " + n + " es " + inverso + ".");
-            return inverso;
-        }
-    }
-
+    /**
+     * 3] Calcular inversos multiplicativos modulo n
+     * Metodo que devuelve un numero congruente positivo con el modulo 26
+     * @param n el numero a devolver la congruencia por ejemplo -7 es congruente con 19, devolvera 19 si n=-7
+     * @return el numero congruente de hacer la operacion n mod 26
+     */
     public static int congruente(int n){
         int nCongruente = n;
         while(nCongruente<0){
             nCongruente+=26;
         }
-        System.out.println("This"+nCongruente);
         return nCongruente;
     }
-
-    // Método que descifra el texto cifrado utilizando el cifrado Afín
-    public static String cifrar(String texto, int m, int a) {
-        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String resultado = "";
-
-        
-        for(int i=0; i<texto.length(); i++){
-            int y = abecedario.indexOf(texto.charAt(i));
-            int afin = (m*y)+a;
-            int cifrado = afin % 26 ;
-            resultado+=abecedario.charAt(cifrado);
+    /**
+     * 3] Calcular inversos multiplicativos modulo n
+     * Metodo que calcula el inverso multiplicativo de un numero
+     * @param m el numero a sacar el inverso
+     * @param n el rango de valores para sacar el inverso de a, para los cifrados se recomienda 26
+     * @return el inverso multiplicativo del valor m
+     */
+    public static int inversoMultiplicativo(int m, int n){
+        int mcd = mcd(m, n);
+        if (mcd != 1) {
+            return 0;
+        } else {
+            int[] coeficientes = euclidesExtendido(m, n);
+            int inverso = coeficientes[0];
+            while (inverso < 0) {
+                inverso += n;
+            }
+            return inverso;
         }
-
-        return resultado;
     }
-
-    // Método que descifra el texto cifrado utilizando el cifrado Afín
-    public static String descifrar(String texto, int m, int a) {
-        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String resultado = "";
-
-        int inverso = inversoMultiplicativo(m, 26);
-        
-        for(int i=0; i<texto.length(); i++){
-            int y = abecedario.indexOf(texto.charAt(i));
-            int afinInverso = (inverso*y)+congruente(inverso*(-a));
-            int descifrado = afinInverso % 26 ;
-            resultado+=abecedario.charAt(descifrado);
-        }
-
-        return resultado;
-    }
-
-    
-
     /**
      * 4] Sustituir letras por otras letras en el mismo texto
      * Metodo que modifica el texto original a trabajar
@@ -377,6 +370,21 @@ public class AlgoritmosBasicos{
         return textoAux;
     }
 
+    /**
+     * 6] Funcion Afin inversa
+     * Metodo que obtiene el valor de la funcion afin inversa de una funcion del tipo 11x+1, su funcion afin seria
+     * x = inverso*(y-1)
+     * @param inverso el inverso multiplicativo del valor m, en la funcion anterior 11 es m
+     * @param y el valor a despejar de la ecuacion, en este caso para descifrar "y" seria la posicion de la letra en el
+     * alfabeto
+     * @param a el aditivo de la funcion, en la funcion anterior el valor seria 1, sin signo, ya que el valor 
+     * negativo lo controlamos en la inversa
+     * @return el valor al que equivale despues de pasar por la funcion afin inversa
+     */
+    public static int afinInverso(int inverso, int y, int a){
+        return (inverso*y)+congruente(inverso*(-a));
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         AlgoritmosBasicos ab = new AlgoritmosBasicos();
@@ -391,6 +399,7 @@ public class AlgoritmosBasicos{
         int a = 0;
 
         while (opcion != 20) {
+            
             System.out.println("\u001B[1m---- MENÚ ALGORITMOS BÁSICOS ----\u001B[0m");
             System.out.println("1. Modificar texto original");
             System.out.println("2. Modificar letras");
@@ -400,9 +409,6 @@ public class AlgoritmosBasicos{
             System.out.println("5. Limpia texto");
             System.out.println("6. Separa texto");
             System.out.println("7. Conteo y porcentajes de apariciones");
-
-            System.out.println("8 Cifrar mediante una funcion afin");
-            System.out.println("9 Descifrar mediante una funcion afin");
             
             System.out.print("\nElige una opción: ");
             opcion = sc.nextInt();
@@ -417,7 +423,7 @@ public class AlgoritmosBasicos{
                     
                     break;
                 case 2:
-                    System.out.print("\n\u001B[38;5;166m\u001B[1m---- MODIFICAR LETRAS ----\u001B[0m\n\n");
+                    System.out.print("\n\n\u001B[31m\u001B[1m---- MODIFICAR LETRAS ----\u001B[0m\n\n");
                     System.out.print("Ingresa el caracter anterior: ");
                     anterior = sc.nextLine();
                     System.out.print("Ingresa el caracter nuevo: ");
@@ -426,22 +432,22 @@ public class AlgoritmosBasicos{
                     
                     break;
                 case 3:
-                    System.out.print("\n\u001B[93m\u001B[1m---- ULTIMO PASO ----\u001B[0m\n\n");
+                    System.out.print("\n\u001B[31m\u001B[1m---- ULTIMO PASO ----\u001B[0m\n\n");
                     ab.ultimoPaso();
                     break;
                 case 4:
-                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- REGRESAR AL TEXTO ORIGINAL ----\u001B[0m\n\n");
+                    System.out.print("\n\u001B[31m\u001B[1m---- REGRESAR AL TEXTO ORIGINAL ----\u001B[0m\n\n");
                     ab.regresaAlTextoOriginal();
                     break;
                 case 5:
-                    System.out.print("\n\u001B[32m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
+                    System.out.print("\n\u001B[93m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
                     System.out.print("Ingrese el texto a limpiar: ");
                     texto = sc.nextLine();
                     String textoLimpio = limpiaTexto(texto);
                     System.out.println("Texto limpio: " + textoLimpio);
                     break;
                 case 6:
-                    System.out.print("\n\u001B[38;5;99m \u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
                     System.out.print("Ingrese el texto a separar: ");
                     texto = sc.nextLine();
                     System.out.print("Ingrese el número de letras por separación: ");
@@ -451,39 +457,13 @@ public class AlgoritmosBasicos{
                     System.out.println("Texto separado: " + textoSeparado);
                     break;
                 case 7:
-                    System.out.println("\n\u001B[35m\u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n");
+                    System.out.println("\n\u001B[32m \u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n");
                     System.out.print("Ingrese el texto para calcular el porcentaje de apariciones de letra: ");
                     texto = sc.nextLine();
                     Hashtable<String, Integer> conteoCaracteres = conteoDeCaracteres(texto);
                     Hashtable<String, String> porcentajes = porcentajeLetra(conteoCaracteres, texto);
                     
                     tablaApariciones(conteoCaracteres,porcentajes);
-                    break;
-                case 8:
-                    System.out.println("\n\u001B[35m\u001B[1m---- CIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a cifrar: \n");
-                    texto = sc.nextLine();
-                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
-                    m = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
-                    a = sc.nextInt();
-                    sc.nextLine();
-                    
-                    System.out.println(cifrar(texto, m, a));
-                    break;
-                case 9:
-                    System.out.println("\n\u001B[35m\u001B[1m---- DESCIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a descifrar:\n");
-                    texto = sc.nextLine();
-                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
-                    m = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
-                    a = sc.nextInt();
-                    sc.nextLine();
-                    
-                    System.out.println(descifrar(texto, m, a));
                     break;
                 
                 case 10:
