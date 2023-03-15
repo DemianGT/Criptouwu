@@ -1,4 +1,5 @@
 import java.util.*;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -25,10 +26,16 @@ public class AlgoritmosBasicos {
      * @param texto es el texto a limpiar.
      * @return el texto limpio convertido a mayúsculas.
      */
-    public static String limpiaTexto(String texto){
+    public static String limpiaTexto(String texto) {
         texto = texto.toUpperCase();
-        String textoSinEspacio = texto.replace(" ", "");
-        String textoLimpio = textoSinEspacio.replaceAll("[^A-Z]", "");
+        // Usamos Normalizer para quitar acentos.
+        String textoLimpio = Normalizer.normalize(texto, Normalizer.Form.NFD);
+        textoLimpio = textoLimpio.replaceAll("[^\\p{ASCII}]", "");
+
+        // Quitamos espacios, números y caracteres especiales
+        textoLimpio = textoLimpio.replaceAll("\\s", "");
+        textoLimpio = textoLimpio.replaceAll("[^A-Z]", "");
+
         return textoLimpio;
     }
 
@@ -464,17 +471,19 @@ public class AlgoritmosBasicos {
                     System.out.print(" • Ingrese el texto a limpiar: ");
                     texto = sc.nextLine();
                     String textoLimpio = limpiaTexto(texto);
-                    System.out.println(" • Texto limpio: " + textoLimpio);
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO LIMPIO ----\u001B[0m\n\n");
+                    System.out.println(textoLimpio);
                     break;
                 case 8:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
                     System.out.print(" • Ingrese el texto a separar: ");
                     texto = sc.nextLine();
-                    System.out.print(" • Ingrese el número de letras por separación: ");
+                    System.out.print("\n • Ingrese el número de letras por separación: ");
                     int numLetras = sc.nextInt();
                     sc.nextLine(); // Consumir el salto de línea
                     String textoSeparado = separaTexto(texto, numLetras);
-                    System.out.println(" • Texto separado: " + textoSeparado);
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO SEPARADO ----\u001B[0m\n\n");
+                    System.out.println(textoSeparado);
                     break;
                 case 9:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n\n");
