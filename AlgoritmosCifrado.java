@@ -2,6 +2,12 @@ import java.util.*;
 
 public class AlgoritmosCifrado extends AlgoritmosBasicos{
 
+    /** Atributos que nos ayudará a dar color al texto en la consola */
+    public static final String RED = "\033[31m";
+    public static final String BLUE = "\033[34m";
+    public static final String CYAN = "\033[36m";
+    public static final String PURPLE = "\033[35m";
+    public static final String RESET = "\u001B[0m";
 
 	/**
      * Método que cifra un texto mediante el algoritmo de Cesar.
@@ -10,6 +16,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
      * @return el texto cifrado.
      */
 	public static String cifradoCesar(String texto, int rotacion) {
+        texto = texto.toUpperCase();
         StringBuilder textoCifrado = new StringBuilder();
         rotacion = rotacion % 26;
         texto = limpiaTexto(texto);
@@ -32,6 +39,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
      * @return el texto descifrado.
      */
     public static String descifradoCesar(String texto, int rotacion) {
+        texto = texto.toUpperCase();
         StringBuilder textoDescifrado = new StringBuilder();
         rotacion = rotacion % 26;
         texto = limpiaTexto(texto);
@@ -47,18 +55,67 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         return textoDescifrado.toString();
     }
 
+    /**
+     * Método que cifra un texto mediante el algoritmo de Vigenere.
+     * @param texto es el texto a cifrar.
+     * @param clave es la clave para el algoritmo.
+     * @return el texto cifrado.
+     */
+    public static String cifradoVigenere(String texto, String clave){
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String textoCifrado = "";
+        texto = limpiaTexto(texto);
+        clave = limpiaTexto(clave);
+        int[] indexTexto = new int[texto.length()];
+        int[] indexClave = new int[texto.length()];
+        int[] indexCifrado = new int[texto.length()];
+
+        for (int i = 0; i < texto.length(); i++) {
+            indexTexto[i] = abecedario.indexOf(texto.substring(i, i + 1));
+            indexClave[i] = abecedario.indexOf(clave.substring(i % clave.length(), (i % clave.length()) + 1));
+            indexCifrado[i] = (indexTexto[i] + indexClave[i]) % abecedario.length();
+            textoCifrado += abecedario.substring(indexCifrado[i], indexCifrado[i] + 1);
+        }
+        return separaTexto(textoCifrado, clave.length());
+    }
+
+    /**
+     * Método que descifra un texto mediante el algoritmo de Vigenere.
+     * @param texto es el texto a descifrar.
+     * @param clave es la clave para el algoritmo.
+     * @return el texto descifrado.
+     */
+    public static String descifradoVigenere(String texto, String clave){
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String textoDescifrado = "";
+        texto = limpiaTexto(texto);
+        clave = limpiaTexto(clave);
+        int[] indexTexto = new int[texto.length()];
+        int[] indexClave = new int[texto.length()];
+        int[] indexCifrado = new int[texto.length()];
+        int n;
+        for (int i = 0; i < texto.length(); i++) {
+            indexTexto[i] = abecedario.indexOf(texto.substring(i, i + 1));
+            indexClave[i] = abecedario.indexOf(clave.substring(i % clave.length(), (i % clave.length()) + 1));
+            n = (indexTexto[i] - indexClave[i]);
+            if(n < 0){
+                n += abecedario.length();
+            }
+            indexCifrado[i] = n % abecedario.length();
+            textoDescifrado += abecedario.substring(indexCifrado[i], indexCifrado[i] + 1);
+        }
+        return textoDescifrado;
+    }
+
     public static String cifradoAfin(String texto, int m, int a) {
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String resultado = "";
-
-        
         for(int i=0; i<texto.length(); i++){
             int y = abecedario.indexOf(texto.charAt(i));
             int afin = (m*y)+a;
             int cifrado = afin % 26 ;
             resultado+=abecedario.charAt(cifrado);
         }
-
         return resultado;
     }
 
@@ -66,16 +123,13 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     public static String descifradoAfin(String texto, int m, int a) {
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String resultado = "";
-
         int inverso = inversoMultiplicativo(m, 26);
-        
         for(int i=0; i<texto.length(); i++){
             int y = abecedario.indexOf(texto.charAt(i));
             int afinInverso = afinInverso(inverso, y, a);
             int descifrado = afinInverso % 26 ;
             resultado+=abecedario.charAt(descifrado);
         }
-
         return resultado;
     }
 
@@ -130,125 +184,129 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
 
-
-
-    public static void main(String[] args){
-
-        /*System.out.println("\nTEXTO:");
-        String texto = "hola mucho gusto uwu";
-        System.out.println(texto);
-        System.out.println("______________________");
-
-        //  Prueba del método de Algoritmo de Cesar: CIFRADO
-        System.out.println("\n PRUEBA ALGORITMO DE CESAR \"CIFRADO\"");
-        System.out.println(cifradoCesar(texto, 4));
-        System.out.println("______________________");
-
-        //  Prueba del método de Algoritmo de Cesar: DESCIFRADO
-        System.out.println("\n PRUEBA ALGORITMO DE CESAR \"DESCIFRADO\"");
-        System.out.println(descifradoCesar(cifradoCesar(texto, 4), 4));
-        System.out.println("______________________");*/
+    // ----------------------- MAIN -----------------------
+    
+    public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
         AlgoritmosCifrado ac = new AlgoritmosCifrado();
-
-        int opcion = 0;
+        int opcion = -1;
         String textoOriginal = "";
         String texto = "";
         String anterior = "";
         String nuevo = "";
         int rotacion = 0;
         String clave = "";
-        int m = 0;
         int a = 0;
+        int b = 0;
 
-        while (opcion != 20) {
-            System.out.println("\u001B[1m---- MENÚ ALGORITMOS DE CIFRADO ----\u001B[0m");
-            System.out.println("1. Cifrado Cesar");
-            System.out.println("2. Descifrado Cesar\n");
-            System.out.println("3. Cifrado Afin");
-            System.out.println("4. Descifrado Afin\n");
-            System.out.println("5. Cifrado clave");
-            System.out.println("6. Descifrado clave\n");
+        while (opcion != 0) {
+            System.out.println(BLUE + "\n \u001B[1m---- MENÚ ALGORITMOS DE CIFRADO Y DESCIFRADO----\u001B[0m" + RESET);
+            System.out.println(" 1. Cifrado Cesar");
+            System.out.println(" 2. Descifrado Cesar\n");
+            System.out.println(" 3. Cifrado Afin");
+            System.out.println(" 4. Descifrado Afin\n");
+            System.out.println(" 5. Cifrado clave");
+            System.out.println(" 6. Descifrado clave\n");
+            System.out.println(" 7. Cifrado Vigenere");
+            System.out.println(" 8. Descifrado Vigenere\n");
+            System.out.println(" 0. Salir\n");
             
-            System.out.print("\nElige una opción: ");
+            System.out.print("\n Elige una opción: ");
             opcion = sc.nextInt();
             sc.nextLine(); // limpiar el buffer de entrada
 
             switch (opcion) {
                 case 1:
-                    System.out.println("\n\u001B[31m\u001B[1m---- CIFRAR MEDIANTE CESAR ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a cifrar: \n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE CESAR ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar: \n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese la rotacion del texto: \n");
+                    System.out.print("\n • Ingrese la rotacion del texto: ");
                     rotacion = sc.nextInt();
                     sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
                     System.out.println(cifradoCesar(texto, rotacion));
                     break;
                 case 2:
-                    System.out.println("\n\u001B[31m\u001B[1m---- DESCIFRAR MEDIANTE CESAR ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a descifrar: \n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE CESAR ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a descifrar: \n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese la rotacion del texto: \n");
+                    System.out.print("\n • Ingrese la rotacion del texto: ");
                     rotacion = sc.nextInt();
                     sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO DESCIFRADO ----\u001B[0m\n\n");
                     System.out.println(descifradoCesar(texto, rotacion));
                     break;
                 case 3:
-                    System.out.println("\n\u001B[93m\u001B[1m---- CIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a cifrar: \n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar: \n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
-                    m = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
+                    System.out.print("\n • Ingrese el valor que multiplica a \"x\". Ejemplo: Para la función Ax+B escribe el valor de A:\n"); 
                     a = sc.nextInt();
                     sc.nextLine();
-                    
-                    System.out.println(cifradoAfin(texto, m, a));
+                    System.out.print("\n • Ingrese el valor que suma a \"x\". Ejemplo: Para la función Ax+B escribe el valor de B:\n"); 
+                    b = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
+                    System.out.println(cifradoAfin(texto, a, b));
                     break;
                 case 4:
-                    System.out.println("\n\u001B[93m\u001B[1m---- DESCIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a descifrar:\n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a descifrar: \n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese el valor que multiplica a x Ejemplo: Para m * x + a escribe m:\n");
-                    m = sc.nextInt();
-                    sc.nextLine();
-                    System.out.print("Ingrese el valor que suma a x Ejemplo: Para m * x + a escribe a:\n");
+                    System.out.print("\n • Ingrese el valor que multiplica a \"x\". Ejemplo: Para la función Ax+B escribe el valor de A:\n"); 
                     a = sc.nextInt();
                     sc.nextLine();
-                    
-                    System.out.println(descifradoAfin(texto, m, a));
+                    System.out.print("\n • Ingrese el valor que suma a \"x\". Ejemplo: Para la función Ax+B escribe el valor de B:\n"); 
+                    b = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO DESCIFRADO ----\u001B[0m\n\n");
+                    System.out.println(descifradoAfin(texto, a, b));
                     break;
                 case 5:
-                    System.out.println("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE CLAVE ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a cifrar:\n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE CLAVE ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar:\n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese la clave con la que se cifrara:\n");
+                    System.out.print("\n • Ingrese la clave con la que se cifrara: ");
                     clave = sc.nextLine();
                     System.out.println(cifradoClave(texto, clave));
                     break;
                 case 6:
-                    System.out.println("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE CLAVE ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto a descifrar:\n");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE CLAVE ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a descifrar:\n");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese la clave con la que se descifrara:\n");
+                    System.out.print("\n • Ingrese la clave con la que se descifrara: ");
                     clave = sc.nextLine();
                     System.out.println(descifradoClave(texto, clave));
                     break;
-                case 10:
-                    System.out.println("Adios uwu");
+                case 7:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE VIGENERE ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar: \n");
+                    texto = sc.nextLine();
+                    System.out.print("\n • Ingrese una clave: ");
+                    clave = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
+                    System.out.println(PURPLE + " (Separamos el texto en bloques del tamaño de la clave)" + RESET);
+                    System.out.println("\n " + cifradoVigenere(texto, clave));
+                    break;
+                case 8:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE VIGENERE ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a descifrar: \n");
+                    texto = sc.nextLine();
+                    System.out.print("\n • Ingrese una clave: ");
+                    clave = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO DESCIFRADO ----\u001B[0m\n\n");
+                    System.out.println(descifradoVigenere(texto, clave));
+                    break;
+                case 0:
+                    System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
                     break;
                 default:
-                    System.out.println("Opción inválida, intenta de nuevo.");
+                    System.out.println(RED + "\n Opción inválida (╥_╥), intenta de nuevo." + RESET);
                     break;
             }
-
             System.out.println();
         }
-
         sc.close();
-
-    } 
-	
+    } 	
 }
