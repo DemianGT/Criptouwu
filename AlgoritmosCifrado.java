@@ -9,13 +9,13 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     public static final String PURPLE = "\033[35m";
     public static final String RESET = "\u001B[0m";
 
-	/**
+    /**
      * Método que cifra un texto mediante el algoritmo de Cesar.
      * @param texto es el texto a cifrar.
      * @param rotacion es el número de veces que se rotará el texto a la derecha.
      * @return el texto cifrado.
      */
-	public static String cifradoCesar(String texto, int rotacion) {
+    public static String cifradoCesar(String texto, int rotacion) {
         texto = texto.toUpperCase();
         StringBuilder textoCifrado = new StringBuilder();
         rotacion = rotacion % 26;
@@ -107,6 +107,106 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         return textoDescifrado;
     }
 
+    /**
+     * Método que crea la la matríz de 5x5 para el cifrado de Playfair.
+     * NOTA: Para este algoritmo suponemos que la letra "X" y "W" están en la misma casilla.
+     * por lo que W será tomada como X.
+     * @param clave es la clave con la cual empezaremos a llenar la matriz de caracteres.
+     * @return matriz cuyos elementos son los caracteres de la clave más los restantes del alfabeto.
+     */
+    public static char[][] generaMatriz(String clave) {
+        clave = limpiaTexto(clave);
+        // Llenamos la matriz comenzando con la clave.
+        char[][] matriz = new char[5][5];
+        int k = 0;
+        boolean[] usedChars = new boolean[26];
+        for (int i = 0; i < clave.length(); i++) {
+            char c = clave.charAt(i);
+            if (!usedChars[c - 'A']) {
+                matriz[k / 5][k % 5] = c;
+                usedChars[c - 'A'] = true;
+                k++;
+            }
+        }
+        // Llenamos la matriz con las letras restantes.
+        for (int i = 0; i < 26; i++) {
+            char c = (char) (i + 'A');
+            if (c == 'W') {
+                continue;
+            }
+            if (!usedChars[c - 'A']) {
+                matriz[k / 5][k % 5] = c;
+                usedChars[c - 'A'] = true;
+                k++;
+            }
+        }
+        return matriz;
+    }
+
+    /**
+     * Método que cifra un texto mediante el algoritmo de Playfair.
+     * @param texto es el texto a cifrar.
+     * @param clave es la clave para el algoritmo.
+     * @return el texto cifrado.
+     */
+    public static String cifradoPlayfair(String texto, String clave) {
+        texto = limpiaTexto(texto);
+        char[][] matriz = generaMatriz(clave);
+        // Agregar una X al final si la longitud del texto es impar
+        if (texto.length() % 2 != 0) {
+            texto += "X";
+        }
+        // Cifrar el texto.
+        StringBuilder textoCifrado = new StringBuilder();
+        for (int i = 0; i < texto.length(); i += 2) {
+            char c1 = texto.charAt(i);
+            char c2 = texto.charAt(i + 1);
+            int fila1 = -1;
+            int columna1 = -1;
+            int fila2 = -1;
+            int columna2 = -1;
+            for (int j = 0; j < 5; j++) {
+                for (int k = 0; k < 5; k++) {
+                    if (matriz[j][k] == c1) {
+                        fila1 = j;
+                        columna1 = k;
+                    } else if (matriz[j][k] == c2) {
+                        fila2 = j;
+                        columna2 = k;
+                    }
+                }
+            }
+            // CASO 1: Las dos letras están en la misma fila de la matriz.
+            if (fila1 == fila2) {
+                textoCifrado.append(matriz[fila1][(columna1 + 1) % 5]);
+                textoCifrado.append(matriz[fila2][(columna2 + 1) % 5]);
+            // CASO 2: Las dos letras están en la misma columna de la matriz.
+            } else if (columna1 == columna2) {
+                textoCifrado.append(matriz[(fila1 + 1) % 5][columna1]);
+                textoCifrado.append(matriz[(fila2 + 1) % 5][columna2]);
+            // CASO 3: Las dos letras están en difernte fila y renglón.
+            } else {
+                textoCifrado.append(matriz[fila1][columna2]);
+                textoCifrado.append(matriz[fila2][columna1]);
+            }
+        }
+        return textoCifrado.toString();
+    }
+
+    /**
+     * Método auxiliar que imprime una matriz bidimensional de carateres.
+     * @param matriz es la matriz a imprimir.
+     * @return los elementos de la matriz bidimensional.
+     */
+    public static void imprimeMatriz(char[][] matriz) {
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(" " + matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
     public static String cifradoAfin(String texto, int m, int a) {
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String resultado = "";
@@ -184,6 +284,9 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
 
+    
+
+
     // ----------------------- MAIN -----------------------
     
     public static void main(String[] args) {
@@ -210,6 +313,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println(" 6. Descifrado clave\n");
             System.out.println(" 7. Cifrado Vigenere");
             System.out.println(" 8. Descifrado Vigenere\n");
+            System.out.println(" 9. Cifrado Playfair");
             System.out.println(" 0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
@@ -298,6 +402,19 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO DESCIFRADO ----\u001B[0m\n\n");
                     System.out.println(descifradoVigenere(texto, clave));
                     break;
+                case 9:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE PLAYFAIR ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar: \n");
+                    texto = sc.nextLine();
+                    System.out.print("\n • Ingrese una clave: ");
+                    clave = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- MATRIZ ----\u001B[0m\n\n");
+                    char[][] matriz = generaMatriz(clave);
+                    imprimeMatriz(matriz);
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
+                    System.out.println(PURPLE + " (Tomamos que las letras \"W\" y \"X\" están en la misma casilla, por lo que una letra W será tomada como X)." + RESET);
+                    System.out.println("\n " + cifradoPlayfair(texto, clave));
+                    break;
                 case 0:
                     System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
                     break;
@@ -308,5 +425,5 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println();
         }
         sc.close();
-    } 	
+    }   
 }
