@@ -4,11 +4,19 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.text.DecimalFormat;
 import java.util.Scanner;
-public class AlgoritmosBasicos{
+
+public class AlgoritmosBasicos {
 
     String textoOriginal = "";
     String texto = "";
     ArrayList<String[]> historial = new ArrayList<>();
+
+    /** Atributos que nos ayudará a dar color al texto en la consola */
+    public static final String RED = "\033[31m";
+    public static final String YELLOW = "\033[33m";
+    public static final String BLUE = "\033[34m";
+    public static final String CYAN = "\033[36m";
+    public static final String RESET = "\u001B[0m";
 
     /**
      * 0] Preprocesamiento de texto 
@@ -27,19 +35,17 @@ public class AlgoritmosBasicos{
     /**
      * 2] Contar letras y trabajar un poco con esas estadisticas
      * Método que nos da el porcentaje de apariciones de una letra en el texto.
-     * @param conteoCaracteres es la tabla hash que contiene las aparciones de la letra en el texto.
+     * @param conteoCaracteres es la tabla hash que contiene las aparciones de una letra en el texto.
      * @param texto es el texto a dividir.
-     * @return una tabla has con la letra y su porcentaje de apariciones.
+     * @return una tabla hash con la letra y su porcentaje de apariciones.
      */
     public static Hashtable<String, String> porcentajeLetra(Hashtable<String, Integer> conteoCaracteres, String texto){
         Hashtable<String, String> porcentajes = new Hashtable<>();  
         texto = limpiaTexto(texto);
         int longTexto = texto.length();
         DecimalFormat formato = new DecimalFormat("#.000");
-
         //Para iterar en la tabla hash
         Enumeration<String> enu = conteoCaracteres.keys();
-
         while (enu.hasMoreElements()) {
             String key = enu.nextElement();
             int repeticiones = conteoCaracteres.get(key);
@@ -49,6 +55,7 @@ public class AlgoritmosBasicos{
         }
         return porcentajes;  
     }
+
     /**
      * 2] Contar letras y trabajar un poco con esas estadisticas
      * Metodo que ordena una tabla de porcentajes para su lectura
@@ -57,15 +64,11 @@ public class AlgoritmosBasicos{
     public static void ordenaTablaPorcentajes(Hashtable<String, String> porcentajes){
         ArrayList<String> keys = new ArrayList<String>(porcentajes.keySet());
         ArrayList<String> values = new ArrayList<String>(porcentajes.values());
-
-        
-
         Collections.sort(values, (s1, s2) -> {
             double v1 = Double.parseDouble(s1.replace("%", ""));
             double v2 = Double.parseDouble(s2.replace("%", ""));
             return Double.compare(v1, v2);
         });
-        
         Collections.sort(keys, (k1, k2) -> {
             String v1 = porcentajes.get(k1);
             String v2 = porcentajes.get(k2);
@@ -73,23 +76,22 @@ public class AlgoritmosBasicos{
             double n2 = Double.parseDouble(v2.replace("%", ""));
             return Double.compare(n1, n2);
         });
-
         String porcentajesString = "{";
-        for(int i=0;i<keys.size();i++){
-            if(i<keys.size()-1){
-                porcentajesString+=keys.get(i)+"="+values.get(i)+",";
-            }else{
-                porcentajesString+=keys.get(i)+"="+values.get(i)+"}";
-            }
-            
+        for(int i = 0; i < keys.size(); i++){
+            if(i < keys.size() - 1){
+                porcentajesString += keys.get(i) + "=" + values.get(i) + ",";
+            } else {
+                porcentajesString += keys.get(i) + "=" + values.get(i) + "}";
+            }  
         }
         System.out.println(porcentajesString);
     }
+
     /**
      * 2] Contar letras y trabajar un poco con esas estadisticas
-     * Metodo que cuenta los caracteres de un texto y los pone en una tabla de frecuencias
-     * @param texto el texto a contar caracteres
-     * @return una tabla de frecuencias
+     * Método que cuenta los caracteres de un texto y los pone en una tabla de frecuencias.
+     * @param texto es el texto a contar sus caracteres.
+     * @return una tabla de frecuencias de las letras.
      */
     public static Hashtable<String, Integer> conteoDeCaracteres(String texto){
         Hashtable<String, Integer> frecuencias = new Hashtable<>();  
@@ -104,15 +106,15 @@ public class AlgoritmosBasicos{
         }
         return frecuencias;  
     }
+
     /**
-     * 2] Contar letras y trabajar un poco con esas estadisticas
-     * Metodo que ordena una tabla de frecuencias para su lectura
-     * @param frecuencias una tabla de frecuencias del tipo {A=1, B=0}
+     * 2] Contar letras y trabajar un poco con esas estadísticas.
+     * Método que ordena una tabla de frecuencias para su lectura.
+     * @param frecuencias una tabla de frecuencias del tipo {A=2, B=1, ..., Z=0}
      */
     public static void ordenaTablaFrecuencias(Hashtable<String, Integer> frecuencias){
         ArrayList<String> keys = new ArrayList<String>(frecuencias.keySet());
         ArrayList<Integer> values = new ArrayList<Integer>(frecuencias.values());
-
         Collections.sort(values);
         Collections.sort(keys, new Comparator<String>() {
             @Override
@@ -122,29 +124,27 @@ public class AlgoritmosBasicos{
                 return value1.compareTo(value2);
             }
         });
-
         String frecuenciaString = "{";
-        for(int i=0;i<keys.size();i++){
-            if(i<keys.size()-1){
-                frecuenciaString+=keys.get(i)+"="+values.get(i)+",";
-            }else{
-                frecuenciaString+=keys.get(i)+"="+values.get(i)+"}";
-            }
-            
+        for(int i = 0; i < keys.size(); i++){
+            if(i < keys.size() - 1) {
+                frecuenciaString += keys.get(i) + "=" + values.get(i) + ",";
+            } else {
+                frecuenciaString += keys.get(i) + "=" + values.get(i) + "}";
+            }   
         }
         System.out.println(frecuenciaString);
     }
+
     /**
-     * 2] Contar letras y trabajar un poco con esas estadisticas
-     * Metodo que ordena una tabla de porcentajes y frecuencias en una tabla de apariciones de la forma
-     * {A = [1-100%], B = [0-0%]}
-     * @param porcentajes una tabla de porcentajes del tipo {A=100%, B=0%}
-     * @param frecuencias una tabla de frecuencias del tipo {A=1, B=0}
+     * 2] Contar letras y trabajar un poco con esas estadísticas.
+     * Método que ordena una tabla de porcentajes y frecuencias en una tabla de apariciones de la forma
+     * {A = [1-100%], B = [2-30%], ..., Z = [0-0%]}
+     * @param porcentajes una tabla de porcentajes del tipo {A=100%, B=0%, ...}
+     * @param frecuencias una tabla de frecuencias del tipo {A=1, B=0, ...}
      */
     public static void tablaApariciones(Hashtable<String, Integer> frecuencias, Hashtable<String, String> porcentajes){
         ArrayList<String> keysF = new ArrayList<String>(frecuencias.keySet());
         ArrayList<Integer> valuesF = new ArrayList<Integer>(frecuencias.values());
-
         Collections.sort(valuesF);
         Collections.sort(keysF, new Comparator<String>() {
             @Override
@@ -154,20 +154,13 @@ public class AlgoritmosBasicos{
                 return value1.compareTo(value2);
             }
         });
-
-        
-        
         ArrayList<String> keysP = new ArrayList<String>(porcentajes.keySet());
         ArrayList<String> valuesP = new ArrayList<String>(porcentajes.values());
-
-        
-
         Collections.sort(valuesP, (s1, s2) -> {
             double v1 = Double.parseDouble(s1.replace("%", ""));
             double v2 = Double.parseDouble(s2.replace("%", ""));
             return Double.compare(v1, v2);
         });
-        
         Collections.sort(keysP, (k1, k2) -> {
             String v1 = porcentajes.get(k1);
             String v2 = porcentajes.get(k2);
@@ -175,19 +168,19 @@ public class AlgoritmosBasicos{
             double n2 = Double.parseDouble(v2.replace("%", ""));
             return Double.compare(n1, n2);
         });
-
         String aparicionesString = "";
-        for(int i=0;i<keysF.size();i++){
-                aparicionesString+="\u001B[35m\u001B[1m"+keysF.get(i)+"\u001B[0m = [\u001B[31m\u001B[1m"+valuesF.get(i)+"\u001B[0m-\u001B[32m\u001B[1m"+valuesP.get(i)+"\u001B[0m] \n";
+        for(int i = 0 ; i < keysF.size(); i++){
+                aparicionesString += "\u001B[35m\u001B[1m " + keysF.get(i) + "\u001B[0m = [\u001B[31m\u001B[1m" + valuesF.get(i) + "\u001B[0m - \u001B[32m\u001B[1m" + valuesP.get(i) + "\u001B[0m] \n";
         }
         System.out.println("\n"+aparicionesString+"\n");
     }
+
     /**
-     * 3] Calcular inversos multiplicativos modulo n
-     * Metodo que obtiene el maximo comun divisor entre dos numeros
-     * @param a el primer numero a sacar el maximo comun divisor
-     * @param b el segundo numero a sacar el maximo comun divisor 
-     * @return el maximo comun divisor de los dos numeros
+     * 3] Calcular inversos multiplicativos modulo n.
+     * Método que obtiene el máximo comun divisor entre dos números.
+     * @param a el primer número a sacar el máximo común divisor.
+     * @param b el segundo número a sacar el máximo común divisor.
+     * @return el máximo común divisor de los dos números.
      */
     public static int mcd(int a, int b) {
         if (b == 0) {
@@ -196,12 +189,13 @@ public class AlgoritmosBasicos{
             return mcd(b, a % b);
         }
     }
+
     /**
      * 3] Calcular inversos multiplicativos modulo n
-     * Metodo que implementa el algoritmo de euclides 
-     * @param a el primer numero a sacar el valor
-     * @param b el segundo numero a sacar el valor
-     * @return los coeficientes de bezout y el maximo comun divisor entre ellos
+     * Método que implementa el algoritmo de euclides.
+     * @param a el primer número a sacar el valor.
+     * @param b el segundo número a sacar el valor.
+     * @return los coeficientes de bezout y el máximo común divisor entre ellos.
      */
     public static int[] euclidesExtendido(int a, int b) {
         if (b == 0) {
@@ -214,25 +208,13 @@ public class AlgoritmosBasicos{
             return new int[] { x, y, mcd };
         }
     }
+
     /**
-     * 3] Calcular inversos multiplicativos modulo n
-     * Metodo que devuelve un numero congruente positivo con el modulo 26
-     * @param n el numero a devolver la congruencia por ejemplo -7 es congruente con 19, devolvera 19 si n=-7
-     * @return el numero congruente de hacer la operacion n mod 26
-     */
-    public static int congruente(int n){
-        int nCongruente = n;
-        while(nCongruente<0){
-            nCongruente+=26;
-        }
-        return nCongruente;
-    }
-    /**
-     * 3] Calcular inversos multiplicativos modulo n
-     * Metodo que calcula el inverso multiplicativo de un numero
-     * @param m el numero a sacar el inverso
-     * @param n el rango de valores para sacar el inverso de a, para los cifrados se recomienda 26
-     * @return el inverso multiplicativo del valor m
+     * 3] Calcular inversos multiplicativos módulo n.
+     * Método que calcula el inverso multiplicativo de un número.
+     * @param m el número a sacar el inverso.
+     * @param n el rango de valores para sacar el inverso de a, para los cifrados se recomienda 26.
+     * @return el inverso multiplicativo del valor m.
      */
     public static int inversoMultiplicativo(int m, int n){
         int mcd = mcd(m, n);
@@ -247,55 +229,57 @@ public class AlgoritmosBasicos{
             return inverso;
         }
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que modifica el texto original a trabajar
-     * @param textoOriginal el texto a modificar
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que modifica el texto original a trabajar.
+     * @param textoOriginal el texto a modificar.
      */
     public void modificaTextoOriginal(String textoOriginal){
         this.texto = textoOriginal;
         this.textoOriginal = textoOriginal;
-        System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+        System.out.print("\n\u001B[93m\u001B[1m---- TEXTO A TRABAJAR ----\u001B[0m\n");
         System.out.println(colorTexto(texto)+"\n");
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que modifica una letra del texto por otra
-     * @param anterior la letra a remplazar
-     * @param nuevo la letra que remplazara
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que modifica una letra del texto por otra.
+     * @param anterior la letra a remplazar.
+     * @param nuevo la letra que remplazará.
      */
     public void modificaLetras(String anterior, String nuevo){
         if(texto.contains(anterior)){
             String[] ultimoPaso = new String[2];
             ultimoPaso[0] = anterior;
             ultimoPaso[1] = nuevo;
-            this.texto=this.texto.replace(anterior, nuevo);
-            System.out.println("\nLetras modificadas exitosamente uwu.\n");
-            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+            this.texto = this.texto.replace(anterior, nuevo);
+            System.out.println("\n Letras modificadas exitosamente (/^▽^)/\n");
+            System.out.print("\n\u001B[93m\u001B[1m---- TEXTO A TRABAJAR ----\u001B[0m\n\n");
             System.out.print(colorTexto(texto)+"\n");
             historial.add(ultimoPaso);
-            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+            System.out.print("\n\u001B[93m\u001B[1m---- HISTORIAL DE CAMBIOS ----\u001B[0m\n\n");
             imprimeHistorial();
-        }else{
-            System.out.println("\nNo existe esa letra en el texto, asegurate de estar escribiendola bien uwu\n");
-        }
-        
-        
+        } else {
+            System.out.println("\n No existe esa letra en el texto (╥_╥), asegurate de estar escribiéndola bien.\n");
+        }      
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que imprime el historial de cambios
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que imprime el historial de cambios.
      */
     public void imprimeHistorial(){
         for(String[] pasos: historial){
-            System.out.println("["+pasos[0]+"->"+pasos[1]+"]");
+            System.out.println(" [" + pasos[0] + "->" + pasos[1] + "]");
         }
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que colorea las letras minusculas de color verde y las mayusculas de color blanco
-     * @param texto el texto a colorear
-     * @return el texto coloreado
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que colorea las letras minúsculas de color verde y las mayúsculas de color blanco
+     * @param texto el texto a colorear.
+     * @return el texto coloreado.
      */
     public static String colorTexto(String texto) {
         StringBuilder sb = new StringBuilder();
@@ -309,48 +293,48 @@ public class AlgoritmosBasicos{
         }
         return sb.toString();
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que regresa al ultimo cambio hecho sobre el texto
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que regresa al último cambio hecho sobre el texto.
      */
     public void ultimoPaso(){
         if(historial.size()!=0){
             String[] ultimoPaso = historial.get(historial.size()-1);
             texto=this.texto.replace(ultimoPaso[1], ultimoPaso[0]);
-            System.out.println("\nÚltimo paso revertido exitosamente uwu.\n");
-            historial.remove(historial.size()-1);
-            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
-            System.out.print(colorTexto(texto)+"\n");
-            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+            System.out.println("\n Último paso revertido exitosamente (/^▽^)/\n");
+            historial.remove(historial.size() - 1);
+            System.out.print("\n\u001B[93m\u001B[1m---- TEXTO A TRABAJAR ----\u001B[0m\n\n");
+            System.out.print(colorTexto(texto) + "\n");
+            System.out.print("\n\u001B[93m\u001B[1m---- HISTORIAL DE CAMBIOS ----\u001B[0m\n\n");
             imprimeHistorial();
-        }else{
-            System.out.println("\nYa estas en el ultimo paso uwu\n");
-            System.out.println("\n---- TEXTO A TRABAJAR ----\n");
-            System.out.print(colorTexto(texto)+"\n");
-            System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+        } else {
+            System.out.println("\nYa estas en el último paso ´･ᴗ･`\n");
+            System.out.print("\n\u001B[93m\u001B[1m---- TEXTO A TRABAJAR ----\u001B[0m\n\n");
+            System.out.print(colorTexto(texto) + "\n");
+            System.out.print("\n\u001B[93m\u001B[1m---- HISTORIAL DE CAMBIOS ----\u001B[0m\n\n");
             imprimeHistorial();
-        }
-        
+        }   
     }
+
     /**
-     * 4] Sustituir letras por otras letras en el mismo texto
-     * Metodo que regresa al texto a su estado sin cambios
+     * 4] Sustituir letras por otras letras en el mismo texto.
+     * Método que regresa al texto a su estado sin cambios.
      */
     public void regresaAlTextoOriginal(){
-        this.texto=this.textoOriginal;
+        this.texto = this.textoOriginal;
         historial.clear();
-        System.out.println("\nTexto Restaurado uwu\n");
-
-        System.out.println("\n---- TEXTO A TRABAJAR ----\n");
+        System.out.println("\nTexto Restaurado ´･ᴗ･`\n");
+        System.out.print("\n\u001B[93m\u001B[1m---- TEXTO A TRABAJAR ----\u001B[0m\n\n");    
         System.out.print(colorTexto(texto)+"\n");
-        System.out.println("\n---- HISTORIAL DE CAMBIOS ----\n");
+        System.out.print("\n\u001B[93m\u001B[1m---- HISTORIAL DE CAMBIOS ----\u001B[0m\n\n");
         imprimeHistorial();
     }
 
 
     /**
-     * 5] Separar un texto en bloques de r columnas
-     * Método que divide en subcadenas un texto.
+     * 5] Separar un texto en bloques de r columnas.
+     * Método que divide en bloques un texto.
      * @param texto es el texto a dividir.
      * @param numLetras es el número de letras en el que será divido el texto.
      * @return el texto dividido de acuerdo al número de letras.
@@ -371,68 +355,83 @@ public class AlgoritmosBasicos{
     }
 
     /**
-     * 6] Funcion Afin inversa
-     * Metodo que obtiene el valor de la funcion afin inversa de una funcion del tipo 11x+1, su funcion afin seria
-     * x = inverso*(y-1)
+     * 6] Funcion Afin inversa.
+     * Método que devuelve un numero congruente positivo con el modulo 26.
+     * @param n el número a devolver la congruencia, por ejemplo: -7 es congruente con 19, devolvera 19 si n=-7.
+     * @return el número congruente de hacer la operación n mod 26.
+     */
+    public static int congruente(int n){
+        int nCongruente = n;
+        while(nCongruente < 0){
+            nCongruente += 26;
+        }
+        return nCongruente;
+    }
+
+    /**
+     * 6] Función Afin inversa.
+     * Método que obtiene el valor de la función afin inversa de una función del tipo 11x+1, 
+     * su funcion afin seria x = inverso*(y-1)
      * @param inverso el inverso multiplicativo del valor m, en la funcion anterior 11 es m
-     * @param y el valor a despejar de la ecuacion, en este caso para descifrar "y" seria la posicion de la letra en el
-     * alfabeto
-     * @param a el aditivo de la funcion, en la funcion anterior el valor seria 1, sin signo, ya que el valor 
-     * negativo lo controlamos en la inversa
-     * @return el valor al que equivale despues de pasar por la funcion afin inversa
+     * @param y el valor a despejar de la ecuacion, en este caso para descifrar "y" sería la 
+     * posición de la letra en el alfabeto.
+     * @param a el aditivo de la función, en la función anterior el valor sería 1 sin signo
+     * ya que el valor negativo lo controlamos en la inversa.
+     * @return el valor al que equivale después de pasar por la función afin inversa.
      */
     public static int afinInverso(int inverso, int y, int a){
-        return (inverso*y)+congruente(inverso*(-a));
+        return (inverso * y) + congruente(inverso * (-a));
     }
+
+
+    // ----------------------- MAIN -----------------------
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         AlgoritmosBasicos ab = new AlgoritmosBasicos();
-
-        int opcion = 0;
+        int opcion = -1;
         String textoOriginal = "";
         String texto = "";
         String anterior = "";
         String nuevo = "";
-
         int m = 0;
         int a = 0;
+        while (opcion != 0) {
+            System.out.println(BLUE + "\n\u001B[1m---- MENÚ ALGORITMOS BÁSICOS ----\u001B[0m" + RESET);
+            System.out.println(" 1. Ingresa texto original");
+            System.out.println(" 2. Modificar letras del texto original");
+            System.out.println(" 3. Revertir último paso");
+            System.out.println(" 4. Regresar al texto original\n");
 
-        while (opcion != 20) {
-            
-            System.out.println("\u001B[1m---- MENÚ ALGORITMOS BÁSICOS ----\u001B[0m");
-            System.out.println("1. Modificar texto original");
-            System.out.println("2. Modificar letras");
-            System.out.println("3. Último paso");
-            System.out.println("4. Regresar al texto original\n");
+            System.out.println(" 5. Inverso multiplicativo de X mod Y");
+            System.out.println(" 6. Valor de la función afin inversa\n");
 
-            System.out.println("5. Limpia texto");
-            System.out.println("6. Separa texto");
-            System.out.println("7. Conteo y porcentajes de apariciones");
+            System.out.println(" 7. Limpia texto");
+            System.out.println(" 8. Separa texto");
+            System.out.println(" 9. Conteo y porcentajes de apariciones");
+            System.out.println(" 0. Salir");
             
-            System.out.print("\nElige una opción: ");
+            System.out.print(CYAN + "\n Elige una opción: " + RESET);
             opcion = sc.nextInt();
             sc.nextLine(); // limpiar el buffer de entrada
 
             switch (opcion) {
                 case 1:
-                    System.out.print("\n\u001B[31m\u001B[1m---- MODIFICAR TEXTO ORIGINAL ----\u001B[0m\n\n");
-                    System.out.print("Ingresa el texto original: ");
+                    System.out.print("\n\u001B[31m\u001B[1m---- INGRESAR TEXTO ORIGINAL ----\u001B[0m\n\n");
+                    System.out.print(" • Ingresa el texto original: ");
                     textoOriginal = sc.nextLine();
                     ab.modificaTextoOriginal(textoOriginal);
-                    
                     break;
                 case 2:
-                    System.out.print("\n\n\u001B[31m\u001B[1m---- MODIFICAR LETRAS ----\u001B[0m\n\n");
-                    System.out.print("Ingresa el caracter anterior: ");
+                    System.out.print("\n\n\u001B[31m\u001B[1m---- MODIFICAR LETRAS DEL TEXTO ORIGINAL----\u001B[0m\n\n");
+                    System.out.print(" • Ingresa el caracter anterior: ");
                     anterior = sc.nextLine();
-                    System.out.print("Ingresa el caracter nuevo: ");
+                    System.out.print(" • Ingresa el caracter nuevo: ");
                     nuevo = sc.nextLine();
                     ab.modificaLetras(anterior, nuevo);
-                    
                     break;
                 case 3:
-                    System.out.print("\n\u001B[31m\u001B[1m---- ULTIMO PASO ----\u001B[0m\n\n");
+                    System.out.print("\n\u001B[31m\u001B[1m---- REVERTIR ULTIMO PASO ----\u001B[0m\n\n");
                     ab.ultimoPaso();
                     break;
                 case 4:
@@ -440,43 +439,60 @@ public class AlgoritmosBasicos{
                     ab.regresaAlTextoOriginal();
                     break;
                 case 5:
-                    System.out.print("\n\u001B[93m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
-                    System.out.print("Ingrese el texto a limpiar: ");
-                    texto = sc.nextLine();
-                    String textoLimpio = limpiaTexto(texto);
-                    System.out.println("Texto limpio: " + textoLimpio);
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- INVERSO MULTIPLICATIVO DE X MOD Y ----\u001B[0m\n\n");
+                    System.out.print(" • Ingresa el valor para X: ");
+                    int x = sc.nextInt();
+                    System.out.print(" • Ingresa el valor para Y: ");
+                    int y = sc.nextInt();
+                    int inversoMul = inversoMultiplicativo(x,y);
+                    System.out.println("\n • El inverso multiplicativo de " + x + " mod " + y + " es: " + inversoMul);
                     break;
                 case 6:
-                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
-                    System.out.print("Ingrese el texto a separar: ");
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- VALOR DE LA FUNCIÓN AFIN INVERSA ----\u001B[0m\n\n");
+                    System.out.println(YELLOW + " * INSTRUCCIONES: " + RESET + "La función es de tipo Ax+B, la función afin sería x = inverso*(y-1), vamos a obtener el valor de x.\n");
+                    System.out.print(" • Ingresa el valor para A: ");
+                    int a1 = sc.nextInt();
+                    System.out.print(" • Ingresa el valor para B: ");
+                    int b1 = sc.nextInt();
+                    System.out.print(" • Ingresa el valor para Y (es la posición de la letra en el alfabeto): ");
+                    int y1 = sc.nextInt();
+                    int afinInverso = afinInverso(a1,y1,b1);
+                    System.out.println("\n • El valor de x es: " + afinInverso);
+                    break;
+                case 7:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a limpiar: ");
                     texto = sc.nextLine();
-                    System.out.print("Ingrese el número de letras por separación: ");
+                    String textoLimpio = limpiaTexto(texto);
+                    System.out.println(" • Texto limpio: " + textoLimpio);
+                    break;
+                case 8:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a separar: ");
+                    texto = sc.nextLine();
+                    System.out.print(" • Ingrese el número de letras por separación: ");
                     int numLetras = sc.nextInt();
                     sc.nextLine(); // Consumir el salto de línea
                     String textoSeparado = separaTexto(texto, numLetras);
-                    System.out.println("Texto separado: " + textoSeparado);
+                    System.out.println(" • Texto separado: " + textoSeparado);
                     break;
-                case 7:
-                    System.out.println("\n\u001B[32m \u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n");
-                    System.out.print("Ingrese el texto para calcular el porcentaje de apariciones de letra: ");
+                case 9:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto para calcular el porcentaje de apariciones de letra: ");
                     texto = sc.nextLine();
                     Hashtable<String, Integer> conteoCaracteres = conteoDeCaracteres(texto);
                     Hashtable<String, String> porcentajes = porcentajeLetra(conteoCaracteres, texto);
-                    
                     tablaApariciones(conteoCaracteres,porcentajes);
                     break;
-                
-                case 10:
-                    System.out.println("Adios uwu");
+                case 0:
+                    System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
                     break;
                 default:
-                    System.out.println("Opción inválida, intenta de nuevo.");
+                    System.out.println(RED + "\n Opción inválida (╥_╥), intenta de nuevo." + RESET);
                     break;
             }
-
             System.out.println();
         }
-
         sc.close();
     }
 }
