@@ -258,6 +258,8 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
     public static String cifradoClave(String texto, String clave) {
+        texto = limpiaTexto(texto);
+        clave = limpiaTexto(clave);
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String abecedarioConClave = "";
         abecedarioConClave = abecedarioConClave(clave);
@@ -271,6 +273,8 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
     public static String descifradoClave(String texto, String clave) {
+        texto = limpiaTexto(texto);
+        clave = limpiaTexto(clave);
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String abecedarioConClave = "";
         abecedarioConClave = abecedarioConClave(clave);
