@@ -161,36 +161,60 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         for (int i = 0; i < texto.length(); i += 2) {
             char c1 = texto.charAt(i);
             char c2 = texto.charAt(i + 1);
-            int fila1 = -1;
-            int columna1 = -1;
-            int fila2 = -1;
-            int columna2 = -1;
+
+            int[] c1Pos = encuentraPosicion(c1, matriz);
+            int[] c2Pos = encuentraPosicion(c2, matriz);
+
+            // CASO 1: Las dos letras están en la misma fila de la matriz.
+            if (c1Pos[0] == c2Pos[0]) {
+                c1Pos[1] = (c1Pos[1] + 1) % 5;
+                c2Pos[1] = (c2Pos[1] + 1) % 5;
+            }
+            // CASO 2: Las dos letras están en la misma columna de la matriz.
+            else if (c1Pos[1] == c2Pos[1]) {
+                c1Pos[0] = (c1Pos[0] + 1) % 5;
+                c2Pos[0] = (c2Pos[0] + 1) % 5;
+            }
+            // CASO 3: Las dos letras están en difernte fila y renglón.
+            else {
+                int temp = c1Pos[1];
+                c1Pos[1] = c2Pos[1];
+                c2Pos[1] = temp;
+            }
+            textoCifrado.append(matriz[c1Pos[0]][c1Pos[1]]);
+            textoCifrado.append(matriz[c2Pos[0]][c2Pos[1]]);
+        }
+
+        // Si hay una 'X' en la cadena la cambia a 'W'
+        String cifradoFinal = "";
+        for (int k = 0; k < textoCifrado.length() ;k++ ) {
+            char aux = textoCifrado.charAt(k);
+            if(aux == 'X'){
+                aux = 'W';
+            }
+            cifradoFinal += aux;  
+        }
+        return cifradoFinal;
+    }
+
+    /**
+     * Método auxiliar que dado un caracter busca su posición dentro de la matriz de Playfair.
+     * @param c es el caracter a buscar.
+     * @param matriz es la matriz de Playfair.
+     * @return un arreglo donde en el indice 0 tiene la posición de X y en el indice 1 la de Y.
+     */
+    public static int[] encuentraPosicion(char c, char[][] matriz) {
+        int[] pos = new int[2];
+        for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
-                    if (matriz[j][k] == c1) {
-                        fila1 = j;
-                        columna1 = k;
-                    } else if (matriz[j][k] == c2) {
-                        fila2 = j;
-                        columna2 = k;
-                    }
+                if (matriz[i][j] == c) {
+                    pos[0] = i;
+                    pos[1] = j;
+                    return pos;
                 }
             }
-            // CASO 1: Las dos letras están en la misma fila de la matriz.
-            if (fila1 == fila2) {
-                textoCifrado.append(matriz[fila1][(columna1 + 1) % 5]);
-                textoCifrado.append(matriz[fila2][(columna2 + 1) % 5]);
-            // CASO 2: Las dos letras están en la misma columna de la matriz.
-            } else if (columna1 == columna2) {
-                textoCifrado.append(matriz[(fila1 + 1) % 5][columna1]);
-                textoCifrado.append(matriz[(fila2 + 1) % 5][columna2]);
-            // CASO 3: Las dos letras están en difernte fila y renglón.
-            } else {
-                textoCifrado.append(matriz[fila1][columna2]);
-                textoCifrado.append(matriz[fila2][columna1]);
-            }
         }
-        return textoCifrado.toString();
+        return pos;
     }
 
     /**
