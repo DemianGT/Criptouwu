@@ -561,6 +561,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             }
             System.out.println();
         }
+        
         sc.close();
     }   
 }
