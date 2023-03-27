@@ -391,7 +391,7 @@ public class AlgoritmosBasicos {
     }
     
     public static String funcionAfinInversa(int m, int a){
-    	String funcionInversa = inversoMultiplicativo(m,26)+"y-"+inversoMultiplicativo(m,26)*a;
+    	String funcionInversa = inversoMultiplicativo(m,26)+"y-("+inversoMultiplicativo(m,26)*a+")";
     	return funcionInversa;
     }
 

@@ -256,6 +256,9 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             resultado += abecedario.charAt(cifrado);
             System.out.println(texto.charAt(i) + "   →   " + m + "(" + y + ") + " + congruente(a) + " = " + (m * y) + " + " + congruente(a) + " = " + afin + " mod 26 = " + cifrado + "   →   " + abecedario.charAt(cifrado));
         }
+        
+        System.out.println("\n • La funcion afin inversa de "+m+"x+"+a+" es: "+funcionAfinInversa(m,a));
+        
         return resultado;
     }
 
