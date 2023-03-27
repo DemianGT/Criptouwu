@@ -389,6 +389,11 @@ public class AlgoritmosBasicos {
     public static int afinInverso(int inverso, int y, int a){
         return (inverso * y) + congruente(inverso * (-a));
     }
+    
+    public static String funcionAfinInversa(int m, int a){
+    	String funcionInversa = inversoMultiplicativo(m,26)+"y-"+inversoMultiplicativo(m,26)*a;
+    	return funcionInversa;
+    }
 
 
     // ----------------------- MAIN -----------------------
@@ -412,10 +417,12 @@ public class AlgoritmosBasicos {
 
             System.out.println(" 5. Inverso multiplicativo de X mod Y");
             System.out.println(" 6. Valor de la función afin inversa\n");
+            System.out.println(" 7. Función afin inversa\n");
+            
 
-            System.out.println(" 7. Limpia texto");
-            System.out.println(" 8. Separa texto");
-            System.out.println(" 9. Conteo y porcentajes de apariciones");
+            System.out.println(" 8. Limpia texto");
+            System.out.println(" 9. Separa texto");
+            System.out.println(" 10. Conteo y porcentajes de apariciones");
             System.out.println(" 0. Salir");
             
             System.out.print(CYAN + "\n Elige una opción: " + RESET);
@@ -456,7 +463,7 @@ public class AlgoritmosBasicos {
                     break;
                 case 6:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- VALOR DE LA FUNCIÓN AFIN INVERSA ----\u001B[0m\n\n");
-                    System.out.println(YELLOW + " * INSTRUCCIONES: " + RESET + "La función es de tipo Ax+B, la función afin sería x = inverso*(y-1), vamos a obtener el valor de x.\n");
+                    System.out.println(YELLOW + " * INSTRUCCIONES: " + RESET + "La función es de tipo Ax+B, la función afin sería x = inverso*(y-B), vamos a obtener el valor de x.\n");
                     System.out.print(" • Ingresa el valor para A: ");
                     int a1 = sc.nextInt();
                     System.out.print(" • Ingresa el valor para B: ");
@@ -466,7 +473,18 @@ public class AlgoritmosBasicos {
                     int afinInverso = afinInverso(a1,y1,b1);
                     System.out.println("\n • El valor de x es: " + afinInverso);
                     break;
+                    
                 case 7:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- FUNCION AFIN INVERSA ----\u001B[0m\n\n");
+                    System.out.println(YELLOW + " * INSTRUCCIONES: " + RESET + "La función es de tipo Ax+B, la función afin sería x = inverso*(y-B), vamos a obtener la funcion inversa inverso*(y-B).\n");
+                    System.out.print(" • Ingresa el valor para A: ");
+                    m = sc.nextInt();
+                    System.out.print(" • Ingresa el valor para B: ");
+                    a = sc.nextInt();
+                    System.out.println("\n • La funcion afin inversa de "+m+"x+"+a+" es: "+funcionAfinInversa(m,a));
+                
+                    break;
+                case 8:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- LIMPIA TEXTO ----\u001B[0m\n\n");
                     System.out.print(" • Ingrese el texto a limpiar: ");
                     texto = sc.nextLine();
@@ -474,7 +492,7 @@ public class AlgoritmosBasicos {
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO LIMPIO ----\u001B[0m\n\n");
                     System.out.println(textoLimpio);
                     break;
-                case 8:
+                case 9:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- SEPARA TEXTO ----\u001B[0m\n\n");
                     System.out.print(" • Ingrese el texto a separar: ");
                     texto = sc.nextLine();
@@ -485,7 +503,7 @@ public class AlgoritmosBasicos {
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO SEPARADO ----\u001B[0m\n\n");
                     System.out.println(textoSeparado);
                     break;
-                case 9:
+                case 10:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- CONTEO Y PORCENTAJES DE APARICIONES DE LETRAS ----\u001B[0m\n\n");
                     System.out.print(" • Ingrese el texto para calcular el porcentaje de apariciones de letra: ");
                     texto = sc.nextLine();
