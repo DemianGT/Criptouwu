@@ -251,10 +251,10 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         String resultado = "";
         for(int i = 0; i < texto.length(); i++){
             int y = abecedario.indexOf(texto.charAt(i));
-            int afin = (m * y) + a;
+            int afin = (m * y) + congruente(a);
             int cifrado = afin % 26 ;
             resultado += abecedario.charAt(cifrado);
-            System.out.println(texto.charAt(i) + "   →   " + m + "(" + y + ") + " + a + " = " + (m * y) + " + " + a + " = " + afin + " mod 26 = " + cifrado + "   →   " + abecedario.charAt(cifrado));
+            System.out.println(texto.charAt(i) + "   →   " + m + "(" + y + ") + " + congruente(a) + " = " + (m * y) + " + " + congruente(a) + " = " + afin + " mod 26 = " + cifrado + "   →   " + abecedario.charAt(cifrado));
         }
         return resultado;
     }
