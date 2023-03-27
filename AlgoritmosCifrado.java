@@ -246,13 +246,15 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
     public static String cifradoAfin(String texto, int m, int a) {
+        texto = limpiaTexto(texto);
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String resultado = "";
-        for(int i=0; i<texto.length(); i++){
+        for(int i = 0; i < texto.length(); i++){
             int y = abecedario.indexOf(texto.charAt(i));
-            int afin = (m*y)+a;
+            int afin = (m * y) + a;
             int cifrado = afin % 26 ;
-            resultado+=abecedario.charAt(cifrado);
+            resultado += abecedario.charAt(cifrado);
+            System.out.println(texto.charAt(i) + "   →   " + m + "(" + y + ") + " + a + " = " + (m * y) + " + " + a + " = " + afin + " mod 26 = " + cifrado + "   →   " + abecedario.charAt(cifrado));
         }
         return resultado;
     }
@@ -493,7 +495,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     b = sc.nextInt();
                     sc.nextLine();
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
-                    System.out.println(cifradoAfin(texto, a, b));
+                    System.out.println("\n" + cifradoAfin(texto, a, b));
                     break;
                 case 4:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE FUNCION AFIN ----\u001B[0m\n\n");
