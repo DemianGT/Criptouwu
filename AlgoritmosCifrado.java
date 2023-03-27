@@ -401,6 +401,30 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
 
+    /**
+     * Método que calcula el índice de coincidencia de un texto cifrado.
+     * @param textoCifrado es el texto a obtener el indice de coincidencia.
+     * @return el índice de coincidencia del texto.
+     */
+    public static double indiceCoincidencia(String textoCifrado) {
+        textoCifrado = limpiaTexto(textoCifrado);
+        int[] frecuencias = new int[26];
+        int totalLetras = 0;
+        for (char letra : textoCifrado.toCharArray()) {
+            if (letra >= 'A' && letra <= 'Z') {
+                frecuencias[letra - 'A']++;
+                totalLetras++;
+            }
+        }
+        double indiceCoincidencia = 0.0;
+        for (int frecuencia : frecuencias) {
+            indiceCoincidencia += Math.pow((double) frecuencia / totalLetras, 2);
+        }
+        return indiceCoincidencia;
+    }
+
+
+
 
     // ----------------------- MAIN -----------------------
     
@@ -430,6 +454,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println("  8. Descifrado Vigenere\n");
             System.out.println("  9. Cifrado Playfair");
             System.out.println(" 10. Cifrado Hill");
+            System.out.println(" 11. Indíce de coincidencia");
             System.out.println("  0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
@@ -552,6 +577,14 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
                     System.out.println("\n " + cifradoHill(texto, matrix));
                     break;
+                case 11:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- INDICE DE COINCIDENCIAS ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el cifrado: \n");
+                    String textoCifrado = sc.nextLine();
+                    double indiceCoincidencia = indiceCoincidencia(textoCifrado);
+                    System.out.print("\n\u001B[93m\u001B[1m---- INDICE DE COINCIDENCIAS OBTENIDO ----\u001B[0m\n\n");
+                    System.out.println(indiceCoincidencia);
+                    break;
                 case 0:
                     System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
                     break;
@@ -561,7 +594,6 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             }
             System.out.println();
         }
-        
         sc.close();
     }   
 }
