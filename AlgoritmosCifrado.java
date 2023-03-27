@@ -222,7 +222,21 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
      * @param matriz es la matriz a imprimir.
      * @return los elementos de la matriz bidimensional.
      */
-    public static void imprimeMatriz(char[][] matriz) {
+    public static void imprimeMatrizChar(char[][] matriz) {
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(" " + matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * Método auxiliar que imprime una matriz bidimensional de carateres.
+     * @param matriz es la matriz a imprimir.
+     * @return los elementos de la matriz bidimensional.
+     */
+    public static void imprimeMatrizInt(int[][] matriz) {
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[i].length; j++) {
                 System.out.print(" " + matriz[i][j] + " ");
@@ -312,7 +326,80 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     }
 
 
-    
+    /**
+     * Método que cifra un texto mediante el algoritmo de Hill.
+     * @param texto es el texto a cifrar.
+     * @param matriz es la matriz de 2x2 con la que se cifrará.
+     * @return el texto cifrado.
+     */
+    public static String cifradoHill(String texto, int[][] matriz){
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String textoCifrado = "";
+        texto = limpiaTexto(texto);
+        if(determinante(matriz) != 0){
+            // Agregar una X al final si la longitud del texto es impar
+            if (texto.length() % 2 != 0) {
+                texto += "X";
+            }
+            for (int i = 0; i < texto.length(); i += 2) {
+                char c1 = texto.charAt(i);
+                char c2 = texto.charAt(i + 1);
+                int i1 = abecedario.indexOf(c1);
+                int i2 = abecedario.indexOf(c2);
+                int i1Cifrado = ((matriz[0][0] * i1) + (matriz[0][1] * i2 )) % 26;
+                int i2Cifrado = ((matriz[1][0] * i1) + (matriz[1][1] * i2)) % 26;
+                char c1Cifrado = abecedario.charAt(i1Cifrado);
+                char c2Cifrado = abecedario.charAt(i2Cifrado);
+                String bloqueCifrado = "" + c1Cifrado + c2Cifrado;
+                textoCifrado += bloqueCifrado;
+            }
+            return textoCifrado;
+        } else {
+            return "No es posible realizar el cifrado porque la matriz no tiene inversa.";
+        }  
+    }
+
+
+    /**
+     * Método auxiliar para el cifrado de Hill que nos da el determiante de la matriz de 2x2.
+     * @param matriz es la matriz a saber su determinante.
+     * @return el determinante de la matriz de 2x2.
+     */
+    public static int determinante(int[][] matriz) {
+        int determinante = matriz[0][0] * matriz[1][1] - matriz[0][1] * matriz[1][0];
+        return determinante;
+    }   
+
+    /**
+     * Método auxiliar para el cifrado de Hill que nos ayuda a crear la matriz de 2x2.
+     * @param a el elemento en la posición [0][0] de la matriz.
+     * @param b el elemento en la posición [0][1] de la matriz.
+     * @param c el elemento en la posición [1][0] de la matriz.
+     * @param d el elemento en la posición [1][1] de la matriz.
+     * @return la matriz con valores pasador como parámetros.
+     */
+    public static int[][] creaMatriz2x2(int a, int b, int c, int d){
+        int[][] matriz = new int[2][2];
+        matriz[0][0] = a;
+        matriz[0][1] = b;
+        matriz[1][0] = c;
+        matriz[1][1] = d;
+        return matriz; 
+    }
+
+    public static double[][] inversaMatriz(int[][] matriz) {
+        int determinante = determinante(matriz);
+        if (determinante == 0) {
+            throw new ArithmeticException("La matriz no tiene Inversa");
+        }
+        double[][] inversa = new double[2][2];
+        inversa[0][0] = matriz[1][1] / determinante;
+        inversa[0][1] = -matriz[0][1] / determinante;
+        inversa[1][0] = -matriz[1][0] / determinante;
+        inversa[1][1] = matriz[0][0] / determinante;
+        return inversa;
+    }
+
 
 
     // ----------------------- MAIN -----------------------
@@ -333,16 +420,17 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
 
         while (opcion != 0) {
             System.out.println(BLUE + "\n \u001B[1m---- MENÚ ALGORITMOS DE CIFRADO Y DESCIFRADO----\u001B[0m" + RESET);
-            System.out.println(" 1. Cifrado Cesar");
-            System.out.println(" 2. Descifrado Cesar\n");
-            System.out.println(" 3. Cifrado Afin");
-            System.out.println(" 4. Descifrado Afin\n");
-            System.out.println(" 5. Cifrado clave");
-            System.out.println(" 6. Descifrado clave\n");
-            System.out.println(" 7. Cifrado Vigenere");
-            System.out.println(" 8. Descifrado Vigenere\n");
-            System.out.println(" 9. Cifrado Playfair");
-            System.out.println(" 0. Salir\n");
+            System.out.println("  1. Cifrado Cesar");
+            System.out.println("  2. Descifrado Cesar\n");
+            System.out.println("  3. Cifrado Afin");
+            System.out.println("  4. Descifrado Afin\n");
+            System.out.println("  5. Cifrado clave");
+            System.out.println("  6. Descifrado clave\n");
+            System.out.println("  7. Cifrado Vigenere");
+            System.out.println("  8. Descifrado Vigenere\n");
+            System.out.println("  9. Cifrado Playfair");
+            System.out.println(" 10. Cifrado Hill");
+            System.out.println("  0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
             opcion = sc.nextInt();
@@ -438,10 +526,31 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     clave = sc.nextLine();
                     System.out.print("\n\u001B[93m\u001B[1m---- MATRIZ ----\u001B[0m\n\n");
                     char[][] matriz = generaMatriz(clave);
-                    imprimeMatriz(matriz);
+                    imprimeMatrizChar(matriz);
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
                     System.out.println(PURPLE + " (Tomamos que las letras \"W\" y \"X\" están en la misma casilla, por lo que una letra W será tomada como X)." + RESET);
                     System.out.println("\n " + cifradoPlayfair(texto, clave));
+                    break;
+                case 10:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CIFRAR MEDIANTE HILL ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a cifrar: \n");
+                    texto = sc.nextLine();
+                    System.out.println("\n • Dada la siguiente matriz ");
+                    System.out.println("[A  B]");
+                    System.out.println("[C  D]");
+                    System.out.print("\n • Ingrese el valor para \"A\": ");
+                    int aD = sc.nextInt();
+                    System.out.print("\n • Ingrese el valor para \"B\": ");
+                    int bD = sc.nextInt();
+                    System.out.print("\n • Ingrese el valor para \"C\": ");
+                    int c = sc.nextInt();
+                    System.out.print("\n • Ingrese el valor para \"D\": ");
+                    int d = sc.nextInt();
+                    int[][] matrix = creaMatriz2x2(aD,bD,c,d);
+                    System.out.print("\n\u001B[93m\u001B[1m---- MATRIZ ----\u001B[0m\n\n");
+                    imprimeMatrizInt(matrix);
+                    System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
+                    System.out.println("\n " + cifradoHill(texto, matrix));
                     break;
                 case 0:
                     System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
