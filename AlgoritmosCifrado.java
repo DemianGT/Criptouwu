@@ -230,6 +230,19 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println();
         }
     }
+    /**
+     * Método auxiliar que imprime una matriz bidimensional de doubles.
+     * @param matriz es la matriz a imprimir.
+     * @return los elementos de la matriz bidimensional.
+     */
+    public static void imprimeMatrizDouble(double[][] matriz) {
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(" " + matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 
     /**
      * Método auxiliar que imprime una matriz bidimensional de carateres.
@@ -351,6 +364,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                 char c2 = texto.charAt(i + 1);
                 int i1 = abecedario.indexOf(c1);
                 int i2 = abecedario.indexOf(c2);
+                //Congruente OuO
                 int i1Cifrado = ((matriz[0][0] * i1) + (matriz[0][1] * i2 )) % 26;
                 int i2Cifrado = ((matriz[1][0] * i1) + (matriz[1][1] * i2)) % 26;
                 char c1Cifrado = abecedario.charAt(i1Cifrado);
@@ -428,6 +442,158 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         return indiceCoincidencia;
     }
 
+    /*[OD][XX] OD->XX*/
+    public static void fuerzaBrutaHill(String[] digrama1, String[] digrama2, int rango, String texto){
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        /*Para el digrama 1 */
+        int[] indicesDesencriptados_1 = new int[2];//[OD]
+        indicesDesencriptados_1[0]=abecedario.indexOf(digrama1[0].charAt(0));
+        indicesDesencriptados_1[1]=abecedario.indexOf(digrama1[0].charAt(1));
+
+        int[] indicesEncriptados_1 = new int[2];
+        indicesEncriptados_1[0]=abecedario.indexOf(digrama1[1].charAt(0));
+        indicesEncriptados_1[1]=abecedario.indexOf(digrama1[1].charAt(1));
+        /*                                      F  C */
+        int[][] sistemaDeEcuaciones_1 = new int[2][3];
+        /*Primera Fila de ecuaciones a+b=r */
+        //a
+        sistemaDeEcuaciones_1[0][0]=indicesEncriptados_1[0];
+        //b
+        sistemaDeEcuaciones_1[0][1]=indicesEncriptados_1[1];
+        //r
+        sistemaDeEcuaciones_1[0][2]=indicesDesencriptados_1[0];
+
+        /*Segunda Fila de ecuaciones c+d=s */
+        //c
+        sistemaDeEcuaciones_1[1][0]=indicesEncriptados_1[0];
+        //d
+        sistemaDeEcuaciones_1[1][1]=indicesEncriptados_1[1];
+        //s
+        sistemaDeEcuaciones_1[1][2]=indicesDesencriptados_1[1];
+
+        /*Para el digrama 2 */
+        int[] indicesDesencriptados_2 = new int[2];//[OD]
+        indicesDesencriptados_2[0]=abecedario.indexOf(digrama2[0].charAt(0));
+        indicesDesencriptados_2[1]=abecedario.indexOf(digrama2[0].charAt(1));
+
+        int[] indicesEncriptados_2 = new int[2];
+        indicesEncriptados_2[0]=abecedario.indexOf(digrama2[1].charAt(0));
+        indicesEncriptados_2[1]=abecedario.indexOf(digrama2[1].charAt(1));
+        /*                                      F  C */
+        int[][] sistemaDeEcuaciones_2 = new int[2][3];
+        /*Primera Fila de ecuaciones a+b=r */
+        //a
+        sistemaDeEcuaciones_2[0][0]=indicesEncriptados_2[0];
+        //b
+        sistemaDeEcuaciones_2[0][1]=indicesEncriptados_2[1];
+        //r
+        sistemaDeEcuaciones_2[0][2]=indicesDesencriptados_2[0];
+
+        /*Segunda Fila de ecuaciones c+d=s */
+        //c
+        sistemaDeEcuaciones_2[1][0]=indicesEncriptados_2[0];
+        //d
+        sistemaDeEcuaciones_2[1][1]=indicesEncriptados_2[1];
+        //s
+        sistemaDeEcuaciones_2[1][2]=indicesDesencriptados_2[1];
+
+        /* S1 hace referencia a Sistema de ecuaciones 1 lo mismo con S2 */
+        obtenVariablesPorFuerzaBruta(sistemaDeEcuaciones_1, sistemaDeEcuaciones_2, rango, texto);
+
+    }
+    
+
+    public static void obtenVariablesPorFuerzaBruta(int[][] s1, int[][] s2, int rango, String texto){
+        
+        ArrayList<String> posiblesTextos = new ArrayList<>();
+        ArrayList<int[][]> posiblesMatrices = new ArrayList<>();
+
+        for(int i=-rango;i<rango;i++){
+            for(int j=-rango;j<rango;j++){
+                for(int k=-rango;k<rango;k++){
+                    for(int l=-rango;l<rango;l++){
+        
+                        boolean ab_1 = congruente((((i*s1[0][0]+j*s1[0][1])%26)))==(s1[0][2] % 26);
+                        boolean ab_2 = congruente((((i*s2[0][0]+j*s2[0][1])%26)))==(s2[0][2] % 26);
+                        boolean cd_1 = congruente((((k*s1[1][0]+l*s1[1][1])%26)))==(s1[1][2] % 26);
+                        boolean cd_2 = congruente((((k*s2[1][0]+l*s2[1][1])%26)))==(s2[1][2] % 26);
+
+                        if(ab_1 && ab_2 && cd_1 && cd_2){
+                            int[][] clave = new int[2][2];
+                            clave[0][0]=i;
+                            clave[0][1]=j;
+                            clave[1][0]=k;
+                            clave[1][1]=l;
+                            String textoDescifrado = descifrar_hill(texto, clave);
+                            posiblesTextos.add(textoDescifrado);
+                            posiblesMatrices.add(clave);
+                            
+                        }
+                        
+                    }
+                }
+
+                
+                
+            }
+        }
+        ArrayList<String> posiblesTextosSinRepetir = new ArrayList<>();
+        ArrayList<int[][]> posiblesMatricesSinRepetir = new ArrayList<>();
+        for (int i = 0; i < posiblesTextos.size(); i++) {
+            String cadena = posiblesTextos.get(i);
+            int indice = i;
+            if (!posiblesTextosSinRepetir.contains(cadena)) {
+                posiblesTextosSinRepetir.add(cadena);
+                posiblesMatricesSinRepetir.add(posiblesMatrices.get(indice));
+            }
+        }
+
+        for(int i=0; i<posiblesTextosSinRepetir.size(); i++){
+            System.out.print("\n\u001B[93m\u001B[1m---- POSIBLE TEXTO DESCIFRADO ----\u001B[0m\n\n");
+            System.out.println(posiblesTextosSinRepetir.get(i));
+            System.out.print("\n\u001B[93m\u001B[1m---- POSIBLE MATRIZ ----\u001B[0m\n\n");
+            imprimeMatrizInt(posiblesMatricesSinRepetir.get(i));
+            
+        }
+
+
+    }
+
+    public static String descifrar_hill(String texto_cifrado, int[][] clave_inversa) {
+
+        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        // Convertir el texto cifrado en números usando la tabla de equivalencia
+        int[] numeros_cifrados = new int[texto_cifrado.length()];
+        for (int i = 0; i < texto_cifrado.length(); i++) {
+            numeros_cifrados[i] = abecedario.indexOf(texto_cifrado.charAt(i));
+        }
+
+        
+
+        // Descifrar el texto cifrado usando la clave inversa
+        int[] numeros_descifrados = new int[numeros_cifrados.length];
+        for (int i = 0; i < numeros_cifrados.length; i += 2) {
+            int x = numeros_cifrados[i];
+            int y = numeros_cifrados[i + 1];
+            numeros_descifrados[i] = congruente((clave_inversa[0][0] * x + clave_inversa[0][1] * y)) % 26;
+            numeros_descifrados[i + 1] = congruente((clave_inversa[1][0] * x + clave_inversa[1][1] * y)) % 26;
+        }
+
+        // Convertir los números descifrados a texto usando la tabla de equivalencia
+        String texto_descifrado = "";
+        for (int numero : numeros_descifrados) {
+            texto_descifrado+=abecedario.charAt(numero);
+        }
+
+        return texto_descifrado;
+    }
+
+    /*    0  1  2
+     * 0 [a][b][r]
+     * 1 [c][d][s]
+    */ 
+
+
 
 
 
@@ -435,8 +601,17 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     
     public static void main(String[] args) {
 
+
+
         Scanner sc = new Scanner(System.in);
         AlgoritmosCifrado ac = new AlgoritmosCifrado();
+
+        
+
+
+
+
+
         int opcion = -1;
         String textoOriginal = "";
         String texto = "";
@@ -459,7 +634,8 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println("  8. Descifrado Vigenere\n");
             System.out.println("  9. Cifrado Playfair");
             System.out.println(" 10. Cifrado Hill");
-            System.out.println(" 11. Indíce de coincidencia");
+            System.out.println(" 11. Descifrado mediante fuerza bruta Hill");
+            System.out.println(" 12. Indíce de coincidencia");
             System.out.println("  0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
@@ -580,9 +756,31 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     System.out.print("\n\u001B[93m\u001B[1m---- MATRIZ ----\u001B[0m\n\n");
                     imprimeMatrizInt(matrix);
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
-                    System.out.println("\n " + cifradoHill(texto, matrix));
+                    System.out.println("\n " + descifrar_hill(texto, matrix));
                     break;
                 case 11:
+                    String[] digrama1 = new String[2];
+                    String[] digrama2 = new String[2];
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- DESCIFRAR MEDIANTE FUERZA BRUTA HILL ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el primer digrama : HO se cifra como AB [HO]->[AB]\n");
+                    System.out.print(" • Escribe el texto conocido \n");
+                    digrama1[0]=sc.nextLine();
+                    System.out.print(" • Escribe el texto cifrado \n");
+                    digrama1[1]=sc.nextLine();
+                    System.out.print(" • Ingrese el segundo digrama : LA se cifra como CD [LA]->[CD]\n");
+                    System.out.print(" • Escribe el texto conocido \n");
+                    digrama2[0]=sc.nextLine();
+                    System.out.print(" • Escribe el texto cifrado \n");
+                    digrama2[1]=sc.nextLine();
+                    System.out.print(" • Escribe el rango en el que quieres hacer el descifrado de fuerza bruta por ejemplo si escribes 10 sera de -10 a 10 \n");
+                    int rango = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print(" • Escribe el texto cifrado \n");
+                    texto = sc.nextLine();
+                    ac.fuerzaBrutaHill(digrama1, digrama2, rango, texto);
+                    
+                    break;
+                case 12:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- INDICE DE COINCIDENCIAS ----\u001B[0m\n\n");
                     System.out.print(" • Ingrese el cifrado: \n");
                     String textoCifrado = sc.nextLine();
