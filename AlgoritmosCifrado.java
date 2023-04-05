@@ -350,7 +350,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
      * @param matriz es la matriz de 2x2 con la que se cifrará.
      * @return el texto cifrado.
      */
-    public static String cifradoHill(String texto, int[][] matriz){
+    /*public static String cifradoHill(String texto, int[][] matriz){
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String textoCifrado = "";
         texto = limpiaTexto(texto);
@@ -376,7 +376,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         } else {
             return "No es posible realizar el cifrado porque la matriz no tiene inversa.";
         }  
-    }
+    }*/
 
 
     /**
@@ -524,7 +524,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                             clave[0][1]=j;
                             clave[1][0]=k;
                             clave[1][1]=l;
-                            String textoDescifrado = descifrar_hill(texto, clave);
+                            String textoDescifrado = cifradoHill(texto, clave);
                             posiblesTextos.add(textoDescifrado);
                             posiblesMatrices.add(clave);
                             
@@ -559,33 +559,30 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
 
     }
 
-    public static String descifrar_hill(String texto_cifrado, int[][] clave_inversa) {
-
+    public static String cifradoHill(String texto, int[][] clave) {
+	
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        // Convertir el texto cifrado en números usando la tabla de equivalencia
-        int[] numeros_cifrados = new int[texto_cifrado.length()];
-        for (int i = 0; i < texto_cifrado.length(); i++) {
-            numeros_cifrados[i] = abecedario.indexOf(texto_cifrado.charAt(i));
+        texto = limpiaTexto(texto);
+        /*Obtenemos los indices del texto correspondientes a nuestro alfabeto */
+        int[] indicesDesencriptados = new int[texto.length()];
+        for (int i = 0; i < texto.length(); i++) {
+            indicesDesencriptados[i] = abecedario.indexOf(texto.charAt(i));
+        }
+        /*Ciframos todos los indices usando la matriz clave */
+        int[] indicesEncriptados = new int[indicesDesencriptados.length];
+        for (int i = 0; i < indicesDesencriptados.length; i += 2) {
+            int x = indicesDesencriptados[i];
+            int y = indicesDesencriptados[i + 1];
+            indicesEncriptados[i] = congruente((clave[0][0] * x + clave[0][1] * y)) % 26;
+            indicesEncriptados[i + 1] = congruente((clave[1][0] * x + clave[1][1] * y)) % 26;
+        }
+        /*Convertimos los indices a texto para tener el texto cifrado */
+        String textoCifrado = "";
+        for (int numero : indicesEncriptados) {
+            textoCifrado+=abecedario.charAt(numero);
         }
 
-        
-
-        // Descifrar el texto cifrado usando la clave inversa
-        int[] numeros_descifrados = new int[numeros_cifrados.length];
-        for (int i = 0; i < numeros_cifrados.length; i += 2) {
-            int x = numeros_cifrados[i];
-            int y = numeros_cifrados[i + 1];
-            numeros_descifrados[i] = congruente((clave_inversa[0][0] * x + clave_inversa[0][1] * y)) % 26;
-            numeros_descifrados[i + 1] = congruente((clave_inversa[1][0] * x + clave_inversa[1][1] * y)) % 26;
-        }
-
-        // Convertir los números descifrados a texto usando la tabla de equivalencia
-        String texto_descifrado = "";
-        for (int numero : numeros_descifrados) {
-            texto_descifrado+=abecedario.charAt(numero);
-        }
-
-        return texto_descifrado;
+        return textoCifrado;
     }
 
     /*    0  1  2
@@ -756,7 +753,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     System.out.print("\n\u001B[93m\u001B[1m---- MATRIZ ----\u001B[0m\n\n");
                     imprimeMatrizInt(matrix);
                     System.out.print("\n\u001B[93m\u001B[1m---- TEXTO CIFRADO ----\u001B[0m\n\n");
-                    System.out.println("\n " + descifrar_hill(texto, matrix));
+                    System.out.println("\n " + cifradoHill(texto, matrix));
                     break;
                 case 11:
                     String[] digrama1 = new String[2];
