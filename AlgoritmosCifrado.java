@@ -343,42 +343,6 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         return resultado;
     }
 
-
-    /**
-     * Método que cifra un texto mediante el algoritmo de Hill.
-     * @param texto es el texto a cifrar.
-     * @param matriz es la matriz de 2x2 con la que se cifrará.
-     * @return el texto cifrado.
-     */
-    /*public static String cifradoHill(String texto, int[][] matriz){
-        String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String textoCifrado = "";
-        texto = limpiaTexto(texto);
-        if(determinante(matriz) != 0){
-            // Agregar una X al final si la longitud del texto es impar
-            if (texto.length() % 2 != 0) {
-                texto += "X";
-            }
-            for (int i = 0; i < texto.length(); i += 2) {
-                char c1 = texto.charAt(i);
-                char c2 = texto.charAt(i + 1);
-                int i1 = abecedario.indexOf(c1);
-                int i2 = abecedario.indexOf(c2);
-                //Congruente OuO
-                int i1Cifrado = ((matriz[0][0] * i1) + (matriz[0][1] * i2 )) % 26;
-                int i2Cifrado = ((matriz[1][0] * i1) + (matriz[1][1] * i2)) % 26;
-                char c1Cifrado = abecedario.charAt(i1Cifrado);
-                char c2Cifrado = abecedario.charAt(i2Cifrado);
-                String bloqueCifrado = "" + c1Cifrado + c2Cifrado;
-                textoCifrado += bloqueCifrado;
-            }
-            return textoCifrado;
-        } else {
-            return "No es posible realizar el cifrado porque la matriz no tiene inversa.";
-        }  
-    }*/
-
-
     /**
      * Método auxiliar para el cifrado de Hill que nos da el determiante de la matriz de 2x2.
      * @param matriz es la matriz a saber su determinante.
@@ -428,17 +392,19 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
     public static double indiceCoincidencia(String textoCifrado) {
         textoCifrado = limpiaTexto(textoCifrado);
         int[] frecuencias = new int[26];
-        int totalLetras = 0;
-        for (char letra : textoCifrado.toCharArray()) {
-            if (letra >= 'A' && letra <= 'Z') {
-                frecuencias[letra - 'A']++;
-                totalLetras++;
+        int totalCaracteres = 0;
+        double indiceCoincidencia = 0.0;
+        for (int i = 0; i < textoCifrado.length(); i++) {
+            char c = textoCifrado.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                frecuencias[c - 'A']++;
+                totalCaracteres++;
             }
         }
-        double indiceCoincidencia = 0.0;
-        for (int frecuencia : frecuencias) {
-            indiceCoincidencia += Math.pow((double) frecuencia / totalLetras, 2);
+        for (int i = 0; i < 26; i++) {
+            indiceCoincidencia += (double) frecuencias[i] * (frecuencias[i] - 1);
         }
+        indiceCoincidencia /= (double) totalCaracteres * (totalCaracteres - 1);
         return indiceCoincidencia;
     }
 
@@ -526,15 +492,10 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                             clave[1][1]=l;
                             String textoDescifrado = cifradoHill(texto, clave);
                             posiblesTextos.add(textoDescifrado);
-                            posiblesMatrices.add(clave);
-                            
-                        }
-                        
+                            posiblesMatrices.add(clave);   
+                        } 
                     }
-                }
-
-                
-                
+                } 
             }
         }
         ArrayList<String> posiblesTextosSinRepetir = new ArrayList<>();
@@ -552,17 +513,22 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.print("\n\u001B[93m\u001B[1m---- POSIBLE TEXTO DESCIFRADO ----\u001B[0m\n\n");
             System.out.println(posiblesTextosSinRepetir.get(i));
             System.out.print("\n\u001B[93m\u001B[1m---- POSIBLE MATRIZ ----\u001B[0m\n\n");
-            imprimeMatrizInt(posiblesMatricesSinRepetir.get(i));
-            
+            imprimeMatrizInt(posiblesMatricesSinRepetir.get(i)); 
         }
-
-
     }
 
+    /**
+     * Método que cifra un texto mediante el algoritmo de Hill.
+     * @param texto es el texto a cifrar.
+     * @param clave es la matriz de 2x2 con la que se cifrará.
+     * @return el texto cifrado.
+     */
     public static String cifradoHill(String texto, int[][] clave) {
-	
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         texto = limpiaTexto(texto);
+        if(determinante(clave) == 0){
+            return "No es posible realizar el cifrado porque la matriz no tiene inversa.";
+        }  
         /*Obtenemos los indices del texto correspondientes a nuestro alfabeto */
         int[] indicesDesencriptados = new int[texto.length()];
         for (int i = 0; i < texto.length(); i++) {
@@ -579,36 +545,18 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         /*Convertimos los indices a texto para tener el texto cifrado */
         String textoCifrado = "";
         for (int numero : indicesEncriptados) {
-            textoCifrado+=abecedario.charAt(numero);
+            textoCifrado += abecedario.charAt(numero);
         }
-
         return textoCifrado;
     }
-
-    /*    0  1  2
-     * 0 [a][b][r]
-     * 1 [c][d][s]
-    */ 
-
-
-
 
 
     // ----------------------- MAIN -----------------------
     
     public static void main(String[] args) {
 
-
-
         Scanner sc = new Scanner(System.in);
         AlgoritmosCifrado ac = new AlgoritmosCifrado();
-
-        
-
-
-
-
-
         int opcion = -1;
         String textoOriginal = "";
         String texto = "";
@@ -632,7 +580,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println("  9. Cifrado Playfair");
             System.out.println(" 10. Cifrado Hill");
             System.out.println(" 11. Descifrado mediante fuerza bruta Hill");
-            System.out.println(" 12. Indíce de coincidencia");
+            System.out.println(" 12. Indice de coincidencia");
             System.out.println("  0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
