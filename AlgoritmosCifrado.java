@@ -408,6 +408,67 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
         return indiceCoincidencia;
     }
 
+    /**public static int longitudClaveFriedman(String textoCifrado, int rango) {
+        double indiceCifrado = indiceCoincidencia(textoCifrado);
+        int mejorLongitud = 0;
+        double mejorIndice = 0;
+        for (int longitud = 1; longitud <= rango; longitud++) {
+            List<StringBuilder> bloques = new ArrayList<>();
+            for (int i = 0; i < longitud; i++) {
+                bloques.add(new StringBuilder());
+                for (int j = i; j < textoCifrado.length(); j += longitud) {
+                    bloques.get(i).append(textoCifrado.charAt(j));
+                }
+            }
+            List<Double> indicesCoincidencia = new ArrayList<>();
+            for (StringBuilder bloque : bloques) {
+                indicesCoincidencia.add(indiceCoincidencia(bloque.toString()));
+            }
+
+            double indicePromedio = indicesCoincidencia.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+            if (mejorLongitud == 0 || Math.abs(indicePromedio - 0.065) < Math.abs(mejorIndice - 0.065)) {
+                mejorLongitud = longitud;
+                mejorIndice = indicePromedio;
+            }
+        }
+        return mejorLongitud;
+    }*/
+
+
+    public static int longitudClaveFriedman(String textoCifrado, int rango) {
+        double indiceCifrado = indiceCoincidencia(textoCifrado);
+        int mejorLongitud = 0;
+        double mejorIndiceCoincidecia = 0;
+        for (int longitud = 1; longitud <= rango; longitud++) {
+            List<StringBuilder> bloques = new ArrayList<>();
+            for (int i = 0; i < longitud; i++) {
+                bloques.add(new StringBuilder());
+                for (int j = i; j < textoCifrado.length(); j += longitud) {
+                    bloques.get(i).append("" + textoCifrado.charAt(j));
+                }
+            }
+            List<Double> indicesCoincidencia = new ArrayList<>();
+            for (int k = 0; k < bloques.size(); k++) {
+                StringBuilder bloqueAux = bloques.get(k);
+                indicesCoincidencia.add(indiceCoincidencia(bloqueAux.toString()));
+            }
+
+            double sumaIndicesCoincidencia = 0.0;
+            for(int m = 0; m < indicesCoincidencia.size(); m++){
+                double indiceCoincidenciaAux = indicesCoincidencia.get(m);
+                sumaIndicesCoincidencia += indiceCoincidenciaAux;
+            }
+            double indiceCoincidenciaPromedio = sumaIndicesCoincidencia / longitud;
+
+            if (mejorLongitud == 0 || Math.abs(indiceCoincidenciaPromedio - 0.074) < Math.abs(mejorIndiceCoincidecia - 0.074)) {
+                mejorLongitud = longitud;
+                mejorIndiceCoincidecia = indiceCoincidenciaPromedio;
+            }
+        }
+        return mejorLongitud;
+    }
+
+
     /*[OD][XX] OD->XX*/
     public static void fuerzaBrutaHill(String[] digrama1, String[] digrama2, int rango, String texto){
         String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -581,6 +642,7 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
             System.out.println(" 10. Cifrado Hill");
             System.out.println(" 11. Descifrado mediante fuerza bruta Hill");
             System.out.println(" 12. Indice de coincidencia");
+            System.out.println(" 13. Longitud de la palabra clave Friedman");
             System.out.println("  0. Salir\n");
             
             System.out.print("\n Elige una opción: ");
@@ -727,11 +789,21 @@ public class AlgoritmosCifrado extends AlgoritmosBasicos{
                     break;
                 case 12:
                     System.out.print("\n\u001B[38;5;82m\u001B[1m---- INDICE DE COINCIDENCIAS ----\u001B[0m\n\n");
-                    System.out.print(" • Ingrese el cifrado: \n");
+                    System.out.print(" • Ingrese el texto cifrado: \n");
                     String textoCifrado = sc.nextLine();
                     double indiceCoincidencia = indiceCoincidencia(textoCifrado);
                     System.out.print("\n\u001B[93m\u001B[1m---- INDICE DE COINCIDENCIAS OBTENIDO ----\u001B[0m\n\n");
                     System.out.println(indiceCoincidencia);
+                    break;
+                case 13:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- LONGITUD DE LA PALABRA CLAVE POR FRIENDAM ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto cifrado: \n");
+                    String textCifrado = sc.nextLine();
+                    System.out.print("\n • Ingrese la longitud máxima que podría tener la palabra clave: \n");
+                    int rangoClave = sc.nextInt();
+                    int longClave = longitudClaveFriedman(textCifrado, rangoClave);
+                    System.out.print("\n\u001B[93m\u001B[1m---- LONGITUD DE LA PALABRA CLAVE ----\u001B[0m\n\n");
+                    System.out.println("La posible longitud es: " + longClave);
                     break;
                 case 0:
                     System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
