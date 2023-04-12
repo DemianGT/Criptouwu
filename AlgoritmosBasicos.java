@@ -395,6 +395,55 @@ public class AlgoritmosBasicos {
     	return funcionInversa;
     }
 
+    /**
+     * Método que le coloca a cada letra del texto un índice comenzando desde el cero.
+     * @param texto es el texto a enumerar sus letras.
+     */
+    public static void enumeraLetra(String texto){
+        texto = limpiaTexto(texto);
+        int contador = 0;
+        for(int i = 0; i < texto.length(); i++){
+            String letra = "" + texto.charAt(i);
+            System.out.println("[" + letra + "," + contador + "]");
+            contador++;
+        } 
+    }
+
+
+    public static Hashtable<String, Integer> preceden(String texto, String x) {
+        texto = limpiaTexto(texto);
+        x = limpiaTexto(x);
+        Hashtable<String, Integer> preceden = new Hashtable<>();  
+        for(int i = 1; i < texto.length(); i++){
+            String letra = "" + texto.charAt(i);
+            if(letra.equals(x)) {
+                if(preceden.containsKey("" + texto.charAt(i-1))){
+                    preceden.put(("" + texto.charAt(i-1)), preceden.get("" + texto.charAt(i-1)) + 1);
+                } else {
+                    preceden.put(("" + texto.charAt(i-1)), 1);
+                }
+            } 
+        }
+        return preceden;  
+    }
+
+    public static Hashtable<String, Integer> suceden(String texto, String x) {
+        texto = limpiaTexto(texto);
+        x = limpiaTexto(x);
+        Hashtable<String, Integer> suceden = new Hashtable<>();  
+        for(int i = 0; i < (texto.length() - 1); i++){
+            String letra = "" + texto.charAt(i);
+            if(letra.equals(x)) {
+                if(suceden.containsKey("" + texto.charAt(i+1))){
+                    suceden.put(("" + texto.charAt(i+1)), suceden.get("" + texto.charAt(i+1)) + 1);
+                } else {
+                    suceden.put(("" + texto.charAt(i+1)), 1);
+                }
+            } 
+        }
+        return suceden;  
+    }
+
 
     // ----------------------- MAIN -----------------------
 
@@ -422,7 +471,10 @@ public class AlgoritmosBasicos {
 
             System.out.println(" 8. Limpia texto");
             System.out.println(" 9. Separa texto");
-            System.out.println(" 10. Conteo y porcentajes de apariciones");
+            System.out.println(" 10.Conteo y porcentajes de apariciones");
+            System.out.println(" 11.Enumerar letras de un texto");
+            System.out.println(" 12.Letras predecesoras de un caracter especifico y sus frecuencias.");
+            System.out.println(" 13.Letras sucesoras de un caracter especifico y sus frecuencias.");
             System.out.println(" 0. Salir");
             
             System.out.print(CYAN + "\n Elige una opción: " + RESET);
@@ -510,6 +562,33 @@ public class AlgoritmosBasicos {
                     Hashtable<String, Integer> conteoCaracteres = conteoDeCaracteres(texto);
                     Hashtable<String, String> porcentajes = porcentajeLetra(conteoCaracteres, texto);
                     tablaApariciones(conteoCaracteres,porcentajes);
+                    break;
+                case 11:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- ENUMERAR LETRAS DEL TEXTO ----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto a enumerar sus letras: ");
+                    texto = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- RESULTADO ----\u001B[0m\n\n");
+                    enumeraLetra(texto);
+                    break;
+                case 12:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CUENTA LETRAS PREDECESORAS A UN CARACTER ESPECIFICO----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto: ");
+                    texto = sc.nextLine();
+                    System.out.print(" • Ingrese el caracter a buscar letras predecedoras: ");
+                    String l1 = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- RESULTADO ----\u001B[0m\n\n");
+                    Hashtable<String, Integer> preceden = preceden(texto,l1);
+                    System.out.println(preceden);
+                    break;
+                case 13:
+                    System.out.print("\n\u001B[38;5;82m\u001B[1m---- CUENTA LETRAS SUCESORAS A UN CARACTER ESPECIFICO----\u001B[0m\n\n");
+                    System.out.print(" • Ingrese el texto: ");
+                    texto = sc.nextLine();
+                    System.out.print(" • Ingrese el caracter a buscar letras sucesoras: ");
+                    String l2 = sc.nextLine();
+                    System.out.print("\n\u001B[93m\u001B[1m---- RESULTADO ----\u001B[0m\n\n");
+                    Hashtable<String, Integer> suceden = suceden(texto,l2);
+                    System.out.println(suceden);
                     break;
                 case 0:
                     System.out.println(YELLOW + "\n  Adiós ヾ(＾∇＾)" + RESET);
