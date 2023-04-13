@@ -1,5 +1,11 @@
 import java.util.*;
 
+/**
+ * Algoritmos de cifrado y descifrado que nos ayudarán para la tarea y exámen.
+ * @author Demian Oswaldo García Toxqui.
+ * @author Karen Cristóbal Morales.
+ * @version 17.0, Abril de 2023.
+ */
 public class AlgoritmosCifrado extends AlgoritmosBasicos{
 
     /** Atributos que nos ayudará a dar color al texto en la consola */
