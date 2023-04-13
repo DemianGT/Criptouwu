@@ -6,6 +6,12 @@ import java.util.Enumeration;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
+/**
+ * Algoritmos básicos que nos ayudarán para la tarea y exámen.
+ * @author Demian Oswaldo García Toxqui.
+ * @author Karen Cristóbal Morales.
+ * @version 17.0, Abril de 2023.
+ */
 public class AlgoritmosBasicos {
 
     String textoOriginal = "";
